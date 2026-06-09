@@ -1,4 +1,4 @@
-import { ScoreCompetenciaEvent } from '../domain/contracts';
+import { ScoreCompetenciaEvent, NecesidadDetectadaEvent } from '../domain/contracts';
 
 /**
  * Puerto de salida para publicar eventos.
@@ -7,4 +7,5 @@ import { ScoreCompetenciaEvent } from '../domain/contracts';
  */
 export interface IEventPublisher {
   publishScoreEvent(event: ScoreCompetenciaEvent): Promise<void>;
+  publishNecesidadEvent(event: NecesidadDetectadaEvent): Promise<void>;
 }

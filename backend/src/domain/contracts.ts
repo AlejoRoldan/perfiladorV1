@@ -18,6 +18,23 @@ export interface ScoringInputPayload {
   respuestas: Respuesta[];
 }
 
+// --- Necesidad Detectada (Iteración 2) ---
+
+export interface NecesidadDetectada {
+  competenciaId: string;
+  scoreActual: number;
+  scoreEsperado: number;
+  brecha: number;
+  prioridad: 'ALTA' | 'MEDIA' | 'BAJA';
+}
+
+export interface NecesidadDetectadaEvent {
+  execution_id: string;
+  user_id: string;
+  necesidades: NecesidadDetectada[];
+  timestamp: string;
+}
+
 // --- Salida (Output / Evento) ---
 
 export interface ScorePorCompetencia {
@@ -43,7 +60,13 @@ export interface MapeoPreguntaCompetencia {
   peso: number; // Por defecto 1, permite ponderar preguntas en el futuro
 }
 
+export interface PerfilEsperado {
+  competenciaId: string;
+  scoreMinimoEsperado: number;
+}
+
 export interface ScoringMatrix {
   version: string;
   mapeos: MapeoPreguntaCompetencia[];
+  perfilesEsperados?: Record<string, PerfilEsperado[]>; // Key: roleId
 }

@@ -27,18 +27,16 @@ perfilador-vazquez/
 └── agent/          # (Futuro) Lógica del agente conversacional LLM.
 ```
 
-## 🚀 Fase Actual: MVP (Iteración 1)
+## 🚀 Fase Actual: Iteración 2 (NecesidadDetectada y Agente)
 
-Estamos construyendo el **Feature inicial: ScoreCompetencia**.
-El objetivo es lograr un flujo determinístico: `diagnostico completado -> scoring por competencia -> evento ScoreCompetencia versionado`.
+Estamos construyendo la **Iteración 2**, que expande el flujo: `scoring por competencia -> detección de necesidad -> inicialización del agente conversacional`.
 
 ### Tareas Completadas / En Progreso
-- [x] T0: Estructura base y taxonomía.
-- [ ] T1: Formalizar contrato de entrada/salida de scoring.
-- [ ] T2: Implementar motor de scoring determinístico (SOLID).
-- [ ] T3: Emitir evento `ScoreCompetencia`.
-- [ ] T4: Pruebas automatizadas mínimas (Jest).
-- [ ] T5: Validación E2E técnica de la feature.
+- [x] **Iteración 1 (MVP):** Motor de scoring determinístico y evento `ScoreCompetencia`.
+- [ ] **T6:** Contratos y motor de reglas para `NecesidadDetectada` (Backend).
+- [ ] **T7:** Inicialización del proyecto del Agente Conversacional (Agent).
+- [ ] **T8:** Pruebas automatizadas del nuevo dominio.
+- [ ] **T9:** Validación E2E del flujo completo (Scoring -> Necesidad -> Agente).
 
 ## 🛠 Stack Tecnológico
 
