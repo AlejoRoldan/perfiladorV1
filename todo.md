@@ -1,0 +1,64 @@
+# Project TODO
+
+- [x] Documentar los requisitos priorizados, los límites de la demo y el uso de datos sintéticos.
+- [x] Definir el tema ITTI configurable y registrar como pendientes los activos oficiales de marca.
+- [x] Modelar datos demo para colaboradores, competencias, evaluaciones, resultados, oportunidades y trazabilidad.
+- [x] Implementar una experiencia de administrador demo con permisos visibles y acceso preparado para autenticación corporativa futura.
+- [x] Crear el panel de talento con indicadores, gráfico de radar, barras, mapa de calor y alternativa tabular accesible.
+- [x] Implementar el constructor de evaluaciones con plantillas, competencias, preguntas, escalas y borrador.
+- [x] Implementar la ficha 360° del colaborador con competencias, resultados, evidencias y explicación de brechas.
+- [x] Implementar la asignación y el flujo de evaluación interactivo con progreso, guardado simulado y resultados explicables.
+- [x] Implementar el mapa de movilidad con oportunidades, compatibilidad explicable y condiciones faltantes.
+- [x] Añadir configuración administrativa, señales de auditoría y exportación simulada con control de permiso.
+- [x] Añadir pruebas unitarias de reglas de puntuación y de los datos demostrativos.
+- [x] Verificar la interfaz en escritorio y móvil, la accesibilidad base, tipos, pruebas y experiencia visual.
+- [x] Documentar la arquitectura, el uso demo y los siguientes pasos de integración.
+- [x] Aplicar permisos visibles por rol y validaciones de acceso para exportación, configuración y auditoría en la demostración.
+- [x] Añadir alternativas tabulares accesibles, visibles y navegables para los gráficos de radar y barras.
+- [x] Completar el constructor con edición funcional de competencias y escalas, además de preguntas y borrador.
+- [x] Mostrar brechas explícitas por competencia y evidencias de respaldo en la ficha 360°.
+- [x] Ejecutar y documentar verificaciones de accesibilidad por teclado y semántica ARIA.
+- [x] Confirmar la documentación final de arquitectura, uso demo e integraciones y revisar el estado de tareas antes del checkpoint.
+- [x] Ejecutar una auditoría verificable de accesibilidad con Axe y registrar los hallazgos persistentes.
+- [x] Revisar los documentos finales y el estado completo del TODO inmediatamente antes del checkpoint de entrega.
+- [x] Confirmar de forma persistente el resultado de Axe y el comando de auditoría en la documentación final.
+- [x] Realizar una revisión explícita de README, documentos de calidad y TODO antes de guardar el checkpoint de entrega.
+- [x] Definir el contrato de recomendación asistida, las exclusiones de datos sensibles y la revisión humana obligatoria.
+- [x] Integrar un procedimiento de IA en servidor que reciba únicamente señales mínimas de competencias y resultados agregados.
+- [x] Implementar una ruta de capacitación personalizada y explicable en la ficha 360° del colaborador.
+- [x] Añadir estados de carga, error, indisponibilidad y confirmación de revisión humana en la experiencia de IA.
+- [x] Añadir pruebas unitarias del contrato de recomendación y validaciones de entrada.
+- [x] Actualizar documentación, ejecutar pruebas y auditar la interfaz antes del checkpoint de mejora.
+- [x] Capturar la revisión visual de la mejora de IA y guardar el checkpoint de entrega posterior a las validaciones.
+- [x] Extraer y normalizar las historias de usuario, reglas de negocio y criterios de aceptación de los tres documentos adjuntos.
+- [x] Elaborar una matriz de trazabilidad que excluya HU1 de autenticación y establezca el orden de implementación de las HUs restantes.
+- [x] Confirmar los supuestos funcionales imprescindibles con Alejo antes de modificar el flujo de la demo.
+- [x] Implementar secuencialmente las HUs priorizadas, empezando por la configuración de evaluaciones y el modelo de perfilamiento.
+- [x] Incorporar pruebas verificables para cada HU implementada y validar los resultados del modelo de perfilamiento.
+- [x] Actualizar documentación de producto y preparar el inventario de código y documentos para el repositorio futuro.
+- [x] Formalizar los diez supuestos aprobados de demo, el alcance H2–H8 y la exclusión explícita de H1.
+- [x] Implementar H2: configuración editable de valores, competencias e importación demo para Producto.
+- [x] Implementar H3: creación de sesiones tipadas y seguimiento visible de generación.
+- [x] Implementar H4: degradación de generación con plantilla local, creación manual y reintento.
+- [x] Implementar H5: edición, invariantes, aprobación, distribución y trazabilidad HITL.
+- [x] Implementar H6: autoevaluación retomable e inmutable posterior al envío.
+- [x] Implementar H7: diagnóstico individual por flujo con tolerancia configurable del 3 % y semáforo.
+- [x] Implementar H8: especificación OpenAPI de la demo sin autenticación y preparada para JWT futuro.
+- [x] Dejar las rutas de capacitación y movilidad como funcionalidades futuras etiquetadas fuera del piloto.
+- [x] Corregir y validar los casos límite de la tolerancia de 0,12 puntos en el diagnóstico H7.
+- [x] Habilitar una URL de demo directa al Perfilador F1 para validación visual de los flujos H2–H8.
+- [x] Ajustar y probar la cantidad de preguntas generadas para las extensiones rápida, estándar y profunda del piloto.
+- [x] Ajustar y probar el diagnóstico H7 para que solo considere los flujos incluidos en la sesión evaluada.
+- [x] Ajustar la navegación de pasos H2–H8 para que todos los flujos sean visibles y accesibles en móvil.
+- [x] Añadir pruebas automatizadas de H4, H5 y H6 para fallback, aprobación, distribución, retoma y bloqueo tras envío.
+- [x] Verificar el inventario de repositorio y enlazarlo desde la documentación principal.
+- [x] Ejecutar la validación final de H2–H8 y revisar el TODO completo antes del checkpoint de entrega.
+- [x] Añadir una prueba explícita de inmutabilidad de H6 después del envío de una autoevaluación.
+- [x] Confirmar de forma persistente el enlace al inventario del repositorio en el README.
+- [x] Releer el TODO y guardar el checkpoint de entrega del piloto después de las correcciones finales.
+- [x] Conectar el bloqueo de inmutabilidad de H6 a la interfaz de autoevaluación después del envío.
+- [x] Verificar el estado y el punto de partida de la rama `perfiladorOPOSV1` en el repositorio destino.
+- [x] Extraer y documentar las pautas de diseño frontend aplicables desde el repositorio Impeccable.
+- [x] Incorporar el código, documentación derivada y documentos fuente autorizados en la rama destino.
+- [x] Validar que el proyecto migrado compila, mantiene sus pruebas y conserva los documentos requeridos.
+- [x] Crear un commit trazable y subir la migración a `perfiladorOPOSV1`.
