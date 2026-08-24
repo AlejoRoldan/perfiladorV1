@@ -173,6 +173,6 @@
 - [x] Construir el panel de control de resultados para People & Culture con estados vacíos y detalle de diagnósticos.
 - [x] Validar permisos, trazabilidad de exportación, responsive y documentación operativa antes de publicar.
 - [x] Verificar el remoto y la rama objetivo del repositorio de Itti Talent Compass antes de sincronizar.
-- [ ] Preparar un commit trazable con los cambios publicados más recientes.
-- [ ] Sincronizar la rama remota, verificar el commit resultante y documentar el estado de GitHub.
-- [ ] Sincronizar específicamente el repositorio AlejoRoldan/perfiladorV1 en la rama perfiladorOPOSV1 verificada.
+- [x] Preparar un commit trazable con los cambios publicados más recientes.
+- [x] Sincronizar la rama remota, verificar el commit resultante y documentar el estado de GitHub.
+- [x] Sincronizar específicamente el repositorio AlejoRoldan/perfiladorV1 en la rama perfiladorOPOSV1 verificada.
