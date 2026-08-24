@@ -15,9 +15,9 @@ import {
   talentTenants,
   users,
   type User,
-} from "../drizzle/schema";
-import { getDb } from "./db";
-import { assertParticipantAccess, assertSamePilotScope, type PilotScope } from "./pilotScope";
+} from "../../../drizzle/schema";
+import { getDb } from "../../db";
+import { assertParticipantAccess, assertSamePilotScope, type PilotScope } from "../access/pilotScope";
 
 type Actor = Pick<User, "id" | "role">;
 

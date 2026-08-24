@@ -6,10 +6,10 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
-import { profilingOpenApi } from "../openapi";
+import { profilingOpenApi } from "../domains/openapi/openapi";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
-import { campaignReminderHandler } from "../campaignReminderHandler";
+import { campaignReminderHandler } from "../domains/campaigns/campaignReminderHandler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {

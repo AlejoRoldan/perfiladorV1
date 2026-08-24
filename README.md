@@ -1,123 +1,287 @@
-# Itti Talent Compass — Grupo Vázquez
+# Itti Talent Compass — Manual operativo de People & Culture
 
-## Propósito
+**Itti Talent Compass** es la plataforma de Workforce Intelligence de Grupo Vázquez para configurar evaluaciones, acompañar su ejecución y revisar resultados de talento dentro de un piloto controlado. Este README funciona como guía de uso para el equipo de **People & Culture**, administración de plataforma y participantes autorizados.
 
-**Itti Talent Compass** es un MVP navegable de Workforce Intelligence para equipos de People & Culture. La experiencia permite explorar talento, administrar instrumentos de evaluación, consultar una ficha 360° y orientar conversaciones de movilidad interna mediante datos explicables. Es una demostración: todos los nombres, resultados, evidencias y organizaciones son ficticios.
+> **Principio de uso responsable.** La plataforma organiza señales y resultados para preparar conversaciones de desarrollo. No toma decisiones automáticas de promoción, contratación, movilidad, compensación, exclusión o sanción. Todo diagnóstico requiere interpretación humana y contexto organizacional.
 
-> Los indicadores y coincidencias son señales para orientar conversaciones humanas. No son decisiones automáticas de promoción, contratación, exclusión o sanción.
-
-## Alcance funcional de la demostración
-
-| Módulo | Qué permite demostrar |
+| Información | Valor |
 |---|---|
-| Panorama | Indicadores de talento, radar, barras, mapa de calor tabular, alertas y auditoría. |
-| Colaboradores | Búsqueda de perfiles sintéticos y acceso a una ficha 360°. |
-| Perfil 360° | Habilidades, nivel observado, evidencia, fortalezas, brechas, metodología, confianza y ruta de capacitación asistida. |
-| Evaluaciones | Listado de instrumentos, constructor, campañas persistentes, participantes, ventanas de evaluación y avisos internos. |
-| Constructor | Navegación por pasos, edición de preguntas, borrador, validación visual y publicación simulada. |
-| Perfilador UCorp F1 | Configuración dual, sesión tipada, fallback, revisión HITL, autoevaluación, diagnóstico por flujo y contrato OpenAPI. |
-| Movilidad interna | Oportunidades, candidatos, coincidencias, brechas y compatibilidad explicable. |
-| Reportes y configuración | Exportación simulada, controles de demo, parámetros organizacionales y auditoría. |
+| Producto | Itti Talent Compass |
+| Público principal | People & Culture y Administración de plataforma |
+| Datos operativos | MySQL/TiDB, mediante procedimientos protegidos de servidor |
+| Acceso | Sesión OAuth aprobada y rol activo |
+| Alcance real | Tenant, piloto, campaña y participante autorizados |
+| Repositorio de entrega | [`AlejoRoldan/perfiladorV1`](https://github.com/AlejoRoldan/perfiladorV1), rama `perfiladorOPOSV1` |
 
-## Datos de demostración
+## Para desarrolladores
 
-El catálogo tipado en `client/src/data/talentDemo.ts` crea un universo consistente con el alcance del MVP: **80 colaboradores**, **3 empresas**, **8 áreas**, **15 equipos**, **20 cargos**, **25 competencias**, instrumentos base y **10 oportunidades internas**. El conjunto está creado con identidades ficticias y no debe sustituirse por datos personales reales hasta implementar controles de privacidad, autorización, retención y aislamiento por tenant.
+El repositorio incorpora una guía de contribución, un portal documental, una plantilla de revisión y un mapa técnico de módulos. Empiece por [`CONTRIBUTING.md`](CONTRIBUTING.md), continúe con [`docs/architecture/README.md`](docs/architecture/README.md) y use [`docs/README.md`](docs/README.md) para localizar documentación operativa, de producto y de calidad.
 
-## Sistema visual ITTI configurable
+## 1. Cómo pensar el ciclo de evaluación
 
-El sistema visual utiliza tokens CSS editables, con una base institucional oscura, acento verde de señal y modo claro para el espacio de trabajo. La aproximación toma como referencia señales visuales públicas del sitio institucional de ITTI, pero **no sustituye un manual oficial de marca**. Antes de producción deben validarse el logotipo autorizado, valores cromáticos, tipografías, iconografía, contrastes y reglas de uso con el equipo de marca.
-
-## Arquitectura del MVP
-
-La interfaz usa React, TypeScript, Tailwind CSS 4, componentes accesibles y Recharts. Los datos de la demostración, las reglas determinísticas y el procedimiento de recomendación de aprendizaje viven separados de los componentes visuales, como preparación para reemplazar el catálogo por servicios tipados y persistencia multiempresa.
+Una evaluación en la plataforma funciona como un **expediente controlado**. People & Culture crea la pauta, la aprueba, la convierte en campaña, asigna a las personas habilitadas y luego revisa resultados antes de exportarlos. Del mismo modo que un expediente físico no debería circular sin responsable, cada etapa conserva alcance, estado y trazabilidad.
 
 ```mermaid
 flowchart LR
-  UI[Interfaz People & Culture] --> DEMO[Catálogo demo tipado]
-  UI --> ENGINE[Motor determinístico]
-  ENGINE --> PROFILE[Perfil de habilidades]
-  UI --> F1[Perfilador UCorp F1]
-  F1 --> F1ENGINE[Motor de diagnóstico 1–4]
-  F1 --> OPENAPI[Contrato REST OpenAPI]
-  UI --> CAMPAIGNS[Campañas persistentes]
-  CAMPAIGNS --> CAMPAIGNDB[(Campañas · Participantes · Avisos)]
-  HEARTBEAT[Planificador global horario] --> CAMPAIGNS
-  ENGINE --> MOBILITY[Compatibilidad persona–rol]
-  PROFILE --> LEARNING[Recomendación asistida]
-  LEARNING --> LLM[Modelo integrado en servidor]
-  DEMO --> DASH[Analítica y visualizaciones]
-  FUTURE[Okta · HRIS · IttiAcademy · Data Lake] -. integración futura .-> API[Servicios tipados y RBAC]
-  API -. sustitución progresiva .-> DEMO
+  A[1. Población autorizada] --> B[2. Instrumento en borrador]
+  B --> C[3. Revisión y aprobación]
+  C --> D[4. Campaña real]
+  D --> E[5. Asignación]
+  E --> F[6. Respuesta y envío]
+  F --> G[7. Diagnóstico]
+  G --> H[8. Reportes y CSV auditado]
 ```
 
-| Capa | Responsabilidad en este MVP | Evolución prevista |
+| Etapa | Responsable habitual | Resultado que habilita la siguiente etapa |
 |---|---|---|
-| Interfaz | Navegación, formularios, vistas, estados y accesibilidad. | Mantener componentes reutilizables y consumir procedimientos tipados. |
-| Datos demo | Escenarios sintéticos visibles desde el primer acceso. | Sustituir por repositorios con tenant, permisos y paginación. |
-| Motor | Normalización, ponderación, brechas y compatibilidad explicable. | Versionar fórmulas, persistir evidencias y registrar recálculos. |
-| Perfilador F1 | Configuración, sesión, HITL, autoevaluación, diagnóstico y OpenAPI en modo demo. | Conectar fuentes, RBAC, persistencia, auditoría inmutable y evidencia documental. |
-| Campañas | Persistencia de campañas, participantes, calendario, avisos internos y trazabilidad idempotente. | Agregar RBAC, notificaciones por canal corporativo, retención e integración con identidad/HRIS. |
-| Recomendación asistida | Envía solo señales mínimas de desarrollo al servidor y valida una ruta educativa estructurada. | Conectar catálogo aprobado, RBAC, consentimiento y auditoría de uso sin contenido sensible. |
-| Gobierno | Señales de rol, auditoría y exportaciones simuladas. | Aplicar RBAC real en servidor, aislamiento, retención y auditoría persistente. |
+| Población | Administración / People & Culture | Participantes del piloto vinculados a identidad activa. |
+| Instrumento | People & Culture | Pauta versionada y validada. |
+| Revisión | People & Culture | Versión aprobada e inmutable. |
+| Campaña | People & Culture | Ventana de evaluación ligada a un instrumento aprobado. |
+| Asignación | People & Culture | Expediente individual disponible para cada participante. |
+| Respuesta | Colaborador | Respuestas guardadas y envío definitivo. |
+| Diagnóstico | People & Culture | Resultado determinístico versionado para revisión humana. |
+| Reportes | People & Culture / Administración | Métricas protegidas y exportación con finalidad registrada. |
 
-## Recomendaciones de capacitación asistidas
+## 2. Acceso, roles y primer ingreso
 
-En cada ficha 360° está disponible una **ruta de capacitación personalizada**. El asistente recibe el rol, seniority, intereses de desarrollo, niveles observados y esperados de competencia, cantidad de evidencias y estado de evaluación. No recibe identidad, correo, ubicación, equipo, respuestas ni comentarios de evaluación. La respuesta se valida como JSON estructurado antes de mostrarse y plantea entre dos y tres actividades educativas genéricas, una pregunta de conversación y el recordatorio de revisión humana.
+La autenticación confirma la identidad que entra al sistema; la autorización decide a qué salas puede entrar esa identidad. Por esta razón, iniciar sesión no basta por sí solo para acceder a información del piloto: la cuenta debe estar habilitada y tener el rol adecuado.[1]
 
-> La función prepara una conversación de desarrollo. No puntúa personas, no hace predicciones laborales y no toma decisiones de promoción, movilidad, compensación, selección o permanencia.
+### Primer ingreso de una persona
 
-El contrato, las exclusiones de datos y la preparación para producción están documentados en [`docs/ai-learning-recommendations.md`](docs/ai-learning-recommendations.md).
+1. La persona inicia sesión con el proveedor OAuth configurado para la plataforma.
+2. En el primer acceso queda registrada inicialmente con estado **`invited`**.
+3. Un administrador abre **Configuración → Identidades autorizadas**, verifica la identidad, asigna el rol mínimo necesario y cambia el estado a **`active`**.
+4. Desde ese momento, la navegación y las acciones disponibles se ajustan al rol; el servidor vuelve a comprobarlo en cada operación protegida.
 
-## Perfilador UCorp F1
+| Estado de la identidad | Qué significa | Acción recomendada |
+|---|---|---|
+| `invited` | La identidad existe, pero no puede operar el piloto. | Revisar identidad, rol y autorización antes de activarla. |
+| `active` | Puede ejecutar las acciones habilitadas por su rol. | Mantener el menor privilegio necesario. |
+| `suspended` | Su sesión ya no puede consultar ni modificar el piloto. | Usar ante salida del piloto, cambio de función o incidente. |
 
-El Perfilador F1 implementa H1–H8 del piloto. La plataforma requiere una sesión OAuth aprobada antes de habilitar sus recorridos. La ruta protegida `/?view=pilot` ahora inicia en un workspace persistente aislado por tenant y piloto: no carga colaboradores sintéticos y solo muestra participantes autorizados. La experiencia demo de F1 se conserva como referencia de diseño y motor; las respuestas, asignaciones y diagnósticos del piloto real se almacenan mediante procedimientos de servidor con alcance explícito. La especificación REST continúa disponible en [`/api/v1/openapi.json`](/api/v1/openapi.json). [2]
+### Qué puede hacer cada rol
 
-| Regla | Implementación de demo |
+| Rol | Uso principal dentro del panel | Límite importante |
+|---|---|---|
+| **Colaborador** | Consultar su recorrido y completar únicamente las evaluaciones que le fueron asignadas. | No administra campañas, accesos ni reportes. |
+| **Líder de equipo** | Consultar las vistas acotadas habilitadas para su función. | No administra campañas, exportaciones ni configuración. |
+| **People & Culture** | Gestionar población, instrumentos, campañas, evaluaciones y reportes del alcance autorizado. | No modifica roles, identidades ni parámetros globales. |
+| **Administración de plataforma** | Gestionar identidad, activación, suspensión, roles y todas las vistas operativas. | No debe retirar ni degradar su propio acceso administrativo activo. |
+
+> **Regla práctica:** si una persona no necesita configurar campañas ni revisar resultados, no debe recibir permisos de People & Culture o Administración. Es más seguro añadir acceso cuando se justifica que retirarlo después de que la información ya fue consultada.
+
+## 3. Recorrido del panel de control
+
+La barra lateral organiza el trabajo por contexto. El equipo no necesita memorizar rutas técnicas: debe seguir el orden de la operación y usar la siguiente acción sugerida por el **Ciclo de evaluación**.
+
+| Sección del panel | Para qué se usa | Cuándo entrar |
+|---|---|---|
+| **Panorama** | Contexto agregado de talento y navegación hacia las áreas de trabajo. | Al iniciar la jornada o preparar una conversación de talento. |
+| **Colaboradores** | Consulta de perfiles autorizados y su información de desarrollo. | Para acompañar una conversación individual, sin reemplazar la evidencia del ciclo real. |
+| **Ciclo de evaluación** | Centro operativo de población, instrumentos, campañas, respuestas y diagnóstico. | Para preparar o dar seguimiento al proceso E2E. |
+| **Datos del piloto** | Consulta del tenant, piloto y población autorizada. | Antes de crear instrumentos o campañas. |
+| **Reportes** | Seguimiento por campaña, detalle protegido y exportación CSV auditada. | Después de que existan evaluaciones enviadas y diagnósticos. |
+| **Configuración** | Gestión de identidades y accesos de plataforma. | Solo para Administración de plataforma. |
+| **Movilidad · futuro** | Referencia de evolución de producto. | No debe utilizarse como decisión de movilidad automatizada. |
+
+### Comprobación inicial antes de operar
+
+Al entrar a **Ciclo de evaluación**, confirme tres elementos antes de crear información:
+
+1. El **tenant** es el correcto para la unidad organizacional que va a gestionar.
+2. El **piloto** activo es el aprobado para la cohorte que se evaluará.
+3. La tarjeta de población indica que los participantes y sus vínculos OAuth están preparados.
+
+El piloto real no crea datos ficticios cuando está vacío. Si aún no existen instrumentos, participantes o respuestas, el panel mostrará un estado vacío y la siguiente acción necesaria. Esta conducta es intencional: evita confundir la demostración visual con un resultado real.[2]
+
+## 4. Preparar la población del piloto
+
+Antes de abrir una campaña, cada participante debe pertenecer al mismo tenant y piloto y contar con una **cuenta OAuth activa vinculada**. Una persona puede estar registrada como invitada en el piloto, pero no recibirá ni podrá abrir una evaluación hasta que su identidad esté activa.[2]
+
+| Validación | Quién la confirma | Motivo |
+|---|---|---|
+| Identidad OAuth creada | Administración de plataforma | Establece la identidad autenticada de la persona. |
+| Estado `active` | Administración de plataforma | Evita que una invitación pendiente acceda a datos. |
+| Rol mínimo adecuado | Administración de plataforma | Aplica el principio de menor privilegio. |
+| Participante dentro del tenant y piloto correctos | People & Culture / Administración | Evita mezclar cohortes o empresas. |
+| Código operativo de reporte | People & Culture | Permite seguimiento protegido sin exponer nombres en reportes. |
+
+> No copie respuestas o diagnósticos de una campaña anterior para “probar” la nueva. Los resultados deben pertenecer a la persona, instrumento, campaña y periodo que realmente representan.
+
+## 5. Configurar y aprobar un instrumento
+
+Un instrumento es la pauta que define **qué se evalúa y cómo se interpreta**. La plataforma usa un borrador persistente y, al aprobarlo, genera una versión inmutable con checksum. Esto equivale a firmar una pauta: una vez firmada, no se reescribe; si hay un cambio, se crea una nueva versión.[3]
+
+### Paso a paso
+
+1. Abra **Ciclo de evaluación** y seleccione **Abrir constructor persistente**.
+2. Seleccione el perfil de referencia, el tipo de evaluación y las competencias que se observarán.
+3. Redacte o ajuste preguntas, pesos, evidencias y etiquetas de escala.
+4. Guarde el contenido como **borrador** mientras se encuentre en construcción.
+5. Cuando la pauta represente el acuerdo de People & Culture, seleccione **Enviar a revisión**.
+6. Revise alcance, matriz, fórmula, preguntas y nota de revisión.
+7. Seleccione **Aprobar versión** solo cuando la pauta esté lista para aplicarse. La versión aprobada será la única que podrá vincularse a una campaña.
+
+| Estado del instrumento | Acciones disponibles | Significado operativo |
+|---|---|---|
+| `draft` | Editar, guardar y enviar a revisión. | La pauta aún puede cambiar. |
+| `in_review` | Revisar y aprobar con nota. | Se bloquea la edición para preservar la versión revisada. |
+| `approved` | Crear una versión nueva si se requiere cambio. | Se conserva un snapshot inmutable, checksum y trazabilidad. |
+
+### Validaciones que debe cumplir
+
+El constructor exige un perfil de referencia, al menos una competencia, dos preguntas ponderadas en escala de 1 a 4 y tres etiquetas visibles de escala. Si falta una de estas piezas, la pauta no debe pasar a revisión. Las acciones de guardado, solicitud de revisión y aprobación generan eventos de auditoría.[3]
+
+## 6. Crear una campaña y asignar evaluaciones
+
+Una campaña es la ventana concreta en la que un instrumento aprobado se aplica a una población. Para evitar desorden, use una campaña por propósito, cohorte y periodo claramente definidos.
+
+### Secuencia recomendada
+
+1. En **Ciclo de evaluación**, elija crear campaña desde un instrumento que esté en estado **`approved`**.
+2. Defina el nombre operativo, la ventana de inicio y cierre y la zona horaria que usará el piloto.
+3. Confirme que la población elegida pertenece al mismo tenant y piloto.
+4. Asigne la campaña únicamente a participantes con cuenta OAuth activa y vinculada.
+5. Revise la pantalla de resumen antes de iniciar la ventana, verificando instrumento, periodo y cantidad de asignaciones.
+
+| Punto de control | Qué comprobar antes de avanzar |
 |---|---|
-| Extensión | Rápida: 5 preguntas; estándar: 10; profunda: 15. |
-| Escala común | Las respuestas se normalizan a niveles de 1 a 4. |
-| Diagnóstico | Tolerancia configurable de 0,12; brecha crítica por debajo, aceptable dentro y destacado por encima. |
-| HITL | No se distribuye una sesión sin todos los flujos activos y rúbricas completas para escenarios. |
-| Inmutabilidad | El envío de la autoevaluación bloquea la edición posterior. |
+| Instrumento | Es la versión aprobada correcta y refleja las competencias acordadas. |
+| Fechas | Inicio, cierre y zona horaria coinciden con la comunicación al piloto. |
+| Población | No existen participantes de otro tenant, piloto o cohorte. |
+| Identidad | Todas las personas asignadas tienen una cuenta OAuth activa vinculada. |
+| Alcance | La campaña tiene propósito claro; no se reutiliza para fines distintos. |
 
-> El diagnóstico orienta una conversación de desarrollo; no automatiza decisiones de empleo. Movilidad interna y capacitación asistida son capacidades futuras fuera del alcance del piloto F1.
+La creación de campaña, la asignación y la lectura posterior se ejecutan en servidor. El navegador no tiene acceso directo a la base de datos ni puede ampliar el alcance cambiando parámetros de la interfaz.[2]
 
-La matriz completa de implementación, criterios y límites está disponible en [`docs/pilot-f1-traceability.md`](docs/pilot-f1-traceability.md).
+### Avisos de campaña
 
-La cobertura de las ocho vistas del mockup standalone, junto con la evidencia de validación móvil, está detallada en [`docs/pilot-standalone-coverage.md`](docs/pilot-standalone-coverage.md).
+El planificador heredado de avisos internos registra hitos de apertura, mitad de periodo y 48 horas antes del cierre para participantes pendientes. No envía mensajes externos por correo o mensajería corporativa. Para el piloto real, trate estos avisos como apoyo de seguimiento interno; cualquier comunicación masiva debe respetar el flujo autorizado de People & Culture y la integración corporativa que se apruebe.[4]
 
-El inventario de código, documentación y archivos fuente a incorporar al repositorio privado se encuentra en [`docs/repository-inventory.md`](docs/repository-inventory.md).
+## 7. Experiencia de la persona evaluada
 
-El diseño gradual para incorporar **20 participantes reales** sin mezclar su información con la demostración está definido en [`docs/pilot-real-participants-storage.md`](docs/pilot-real-participants-storage.md). La identidad, la aprobación explícita y el control de acceso por rol se documentan en [`docs/access-control-operation.md`](docs/access-control-operation.md). El modelo persistente y la operación por tenant, piloto, campaña y participante están documentados en [`docs/pilot-persistence-operation.md`](docs/pilot-persistence-operation.md).
+Cuando una evaluación está asignada, la persona la encuentra en su bandeja personal. El servidor limita esa bandeja a sus propios expedientes; una persona no puede ver respuestas o evaluaciones de otra aunque altere una dirección o parámetro en el navegador.[2]
 
-La configuración, revisión y aprobación inmutable de instrumentos persistentes están descritas en [`docs/persistent-instrument-operation.md`](docs/persistent-instrument-operation.md).
+1. El colaborador inicia sesión con su identidad activa.
+2. Abre la evaluación asignada desde su bandeja personal.
+3. Responde según la escala y guarda el avance cuando corresponda.
+4. Comprueba las respuestas antes de seleccionar **Enviar**.
+5. Tras el envío, la evaluación queda bloqueada y no puede editarse.
 
-La auditoría de capacidades y la hoja de ruta para evolucionar el artefacto hacia un proceso E2E de talento están disponibles en [`docs/e2e-talent-platform-roadmap.md`](docs/e2e-talent-platform-roadmap.md).
+> Explique a cada participante que “Enviar” significa cerrar el expediente para preservar la integridad del diagnóstico. Si se detecta una situación excepcional, People & Culture debe gestionar la corrección mediante el proceso acordado; no debe intentar alterar respuestas directamente en la base de datos.
 
-El recorrido técnico y operativo que registra campañas, asignaciones, respuestas y diagnósticos en MySQL/TiDB está documentado en [`docs/evaluation-persistence-operation.md`](docs/evaluation-persistence-operation.md).
+## 8. Revisar y calcular diagnósticos
 
-El panel protegido de resultados, sus filtros y la exportación CSV trazable están documentados en [`docs/results-dashboard-operation.md`](docs/results-dashboard-operation.md).
+Después de recibir evaluaciones enviadas, People & Culture puede solicitar el cálculo de diagnóstico. El cálculo es **determinístico**: parte del instrumento aprobado, utiliza la versión registrada de la fórmula y conserva cobertura y brechas como evidencia de análisis.[2]
 
-## Campañas de evaluación y avisos internos
+| Antes de calcular | Después de calcular |
+|---|---|
+| Verifique que las respuestas estén enviadas y correspondan a la campaña correcta. | Revise puntaje, cobertura, brechas y estado de diagnóstico dentro del alcance autorizado. |
+| Confirme que el instrumento aprobado representa el criterio acordado. | Prepare una conversación humana de devolución; no entregue el resultado como una decisión automática. |
+| Identifique evaluaciones incompletas o fuera de plazo antes de interpretarlas. | Registre las acciones de desarrollo acordadas fuera de la evaluación si así lo define la política interna. |
 
-El módulo heredado de campañas permanece como demostración de la cadencia y los avisos internos. El ciclo real debe operar exclusivamente mediante el repositorio aislado por `tenant_id`, `pilot_id` y participante; la migración de la experiencia visible está priorizada en la hoja de ruta E2E.
+El diagnóstico es una señal de desarrollo, no una etiqueta permanente de la persona. Use el resultado junto con contexto de rol, evidencias relevantes y una conversación respetuosa.
 
-El planificador global `itti-campaign-reminders` revisa las campañas cada hora por el callback protegido `POST /api/scheduled/campaign-reminders`. Cuando corresponde, registra un aviso de apertura, uno a mitad de la ventana y uno 48 horas antes del cierre para participantes pendientes. Cada entrega usa una clave idempotente por campaña, participante e hito, por lo que un reintento no duplica avisos.
+## 9. Consultar resultados y exportar CSV
 
-> En este alcance, los avisos son **internos a la plataforma**: se registran y se visualizan en la administración. No se envían correos ni mensajes externos. Antes de invitar usuarios reales, los avisos deberán migrarse y vincularse a asignaciones persistentes del piloto para conservar el filtro de tenant, campaña y participante.
+La sección **Reportes** presenta únicamente información persistida del tenant y piloto autorizados. Si aún no hay evaluaciones asignadas, enviadas o diagnosticadas, verá valores en cero y una explicación del siguiente paso pendiente; no se generan métricas de relleno.[5]
 
-La operación, la activación única del planificador y los límites de la demo están detallados en [`docs/campaigns-operation.md`](docs/campaigns-operation.md).
+### Cómo usar el panel de resultados
 
-## Ejecutar localmente
+1. Abra **Reportes** desde la sección Gobierno.
+2. Confirme el alcance visible de tenant y piloto.
+3. Filtre por campaña cuando necesite analizar una ventana específica.
+4. Revise los indicadores de **Asignadas**, **Enviadas**, **Diagnosticadas** y **Promedio observado**.
+5. Consulte el detalle protegido por **código de reporte**, no por nombre visible.
+6. Si existe una necesidad legítima, escriba una **finalidad de exportación** concreta antes de seleccionar **Exportar CSV**.
 
-El proyecto utiliza `pnpm` y requiere Node.js 22 o una versión compatible.
+| Métrica o campo | Uso apropiado | Precaución |
+|---|---|---|
+| Asignadas | Seguir el volumen de trabajo abierto. | No equivale a respuesta ni resultado. |
+| Enviadas | Dar seguimiento a finalización de campaña. | Revisar ventana y población antes de interpretar. |
+| Diagnosticadas | Confirmar que hay resultado calculado y versionado. | No sustituye la revisión de People & Culture. |
+| Promedio observado | Observar una señal agregada de campaña. | No usar como único criterio sobre una persona o equipo. |
+| Código de reporte | Conciliar casos sin exponer nombres en la tabla. | No intentar reidentificar información fuera de la finalidad autorizada. |
+
+### Qué incluye la exportación y cómo se audita
+
+La exportación CSV se genera en el servidor y exige pertenencia activa a People & Culture o Administración. Incluye código de reporte, campaña, estado y fechas operativas, puntaje o estado de diagnóstico, versión de fórmula, tenant y piloto. Cada solicitud registra actor, alcance, campaña y finalidad en la auditoría; el contenido sensible no se duplica dentro del log.[5]
+
+> Antes de exportar, formule la finalidad en una frase concreta, por ejemplo: “Preparar la revisión de cierre de la campaña de liderazgo del piloto F1”. Evite finalidades vagas como “análisis” o “por si acaso”.
+
+## 10. Seguridad y protección de la información
+
+La plataforma aplica aislamiento por **tenant**, **piloto** y, cuando existe una persona concreta, por **participante** y relación con su usuario autenticado. Las verificaciones ocurren en servidor antes de leer o escribir la base de datos.[2]
+
+| Práctica obligatoria | Por qué importa |
+|---|---|
+| Usar cuentas individuales y nunca compartir sesiones. | Mantiene la trazabilidad de quién hizo cada acción. |
+| Asignar el rol mínimo necesario. | Reduce exposición innecesaria de datos de talento. |
+| Confirmar tenant y piloto antes de crear o exportar. | Evita mezclar cohortes o compañías. |
+| Describir la finalidad de toda exportación. | Da contexto auditable al uso del archivo. |
+| Usar códigos de reporte para seguimiento. | Reduce la exposición de identidad en vistas y archivos operativos. |
+| Mantener la revisión humana en diagnósticos. | Evita convertir una señal analítica en una decisión automática. |
+
+No introduzca nombres, respuestas o diagnósticos reales en las vistas que indiquen explícitamente datos de demostración. Antes de incorporar archivos de personal o integrar un HRIS, debe existir una aprobación formal de privacidad, retención, acceso, minimización de datos y trazabilidad operativa.
+
+## 11. Resolución de situaciones frecuentes
+
+| Situación | Causa probable | Acción del equipo |
+|---|---|---|
+| Una persona inicia sesión pero no accede al panel. | Está `invited` o `suspended`, o no tiene un rol habilitado. | Administración debe revisar identidad, estado y rol en Configuración. |
+| No aparece un participante al asignar. | No pertenece al piloto/tenant actual o no tiene cuenta OAuth activa vinculada. | Revise población e identidad antes de crear la asignación. |
+| No se puede crear campaña. | No hay un instrumento aprobado en el mismo piloto. | Complete revisión y aprobación; no intente usar un borrador. |
+| No se puede editar una evaluación enviada. | El envío es definitivo para proteger la integridad. | Active el procedimiento interno de corrección, sin modificar registros directamente. |
+| Reportes muestra cero. | Aún no existen asignaciones, envíos o diagnósticos persistidos. | Siga la siguiente etapa del ciclo mostrada en el panel. |
+| No aparece el botón de exportar o falla la descarga. | Rol insuficiente, finalidad vacía o alcance no autorizado. | Confirme rol, tenant, piloto, campaña y escriba una finalidad específica. |
+| Se necesita cambiar una pregunta aprobada. | La versión aprobada es inmutable. | Cree una nueva versión del instrumento y apruébela antes de una nueva campaña. |
+
+## 12. Operación sugerida para una campaña de piloto
+
+| Momento | Responsable | Verificación de salida |
+|---|---|---|
+| Preparación | Administración + People & Culture | Identidades activas, roles correctos y población en el piloto adecuado. |
+| Diseño | People & Culture | Instrumento guardado, revisado y aprobado. |
+| Lanzamiento | People & Culture | Campaña con fechas correctas, instrumento aprobado y asignaciones válidas. |
+| Seguimiento | People & Culture | Estado de envío revisado sin exponer información fuera del alcance. |
+| Cierre | People & Culture | Diagnósticos calculados, revisados y contextualizados. |
+| Reporte | People & Culture / Administración | Filtros verificados, exportación justificada y auditoría disponible. |
+
+## 13. Arquitectura resumida
+
+La interfaz usa **React 19**, **TypeScript** y **Tailwind CSS 4**. El servidor usa **Express 4**, **tRPC 11**, **Drizzle ORM** y una conexión administrada a **MySQL/TiDB**. La aplicación no expone SQL al navegador: cada acción viaja a un procedimiento de servidor que valida sesión, rol y alcance antes de persistir.
+
+```mermaid
+flowchart TB
+  U[Usuario OAuth activo] --> UI[Panel Itti Talent Compass]
+  UI --> RPC[Procedimientos tRPC protegidos]
+  RPC --> AUTH[Validación de rol y alcance]
+  AUTH --> DB[(MySQL / TiDB)]
+  DB --> AUDIT[Eventos de auditoría]
+  RPC --> UI
+```
+
+| Componente | Responsabilidad |
+|---|---|
+| `talent_tenants`, `talent_pilots`, `talent_tenant_members` | Contexto organizacional y membresías autorizadas. |
+| `pilot_participants` | Población del piloto y vínculo con identidades activas. |
+| `pilot_instrument_drafts`, `pilot_instruments` | Borradores, versiones aprobadas, checksum e inmutabilidad. |
+| `assessment_campaigns`, `assessment_campaign_participants` | Ventanas y población de cada campaña. |
+| `pilot_assessments`, `pilot_assessment_answers` | Expediente de evaluación y respuestas por pregunta. |
+| `pilot_diagnoses` | Diagnósticos versionados, brechas y cobertura. |
+| `pilot_audit_events` | Evidencia de acciones y exportaciones sin duplicar contenido sensible. |
+
+## 14. Desarrollo y comprobaciones técnicas
+
+Para ejecutar el proyecto de forma local se requiere Node.js 22 o una versión compatible y `pnpm`.
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Para validar tipos y la suite de pruebas:
+Para validar tipos, pruebas y accesibilidad:
 
 ```bash
 pnpm check
@@ -125,25 +289,29 @@ pnpm test
 pnpm test:a11y
 ```
 
-## Pruebas incluidas
+No se deben versionar archivos `.env`, credenciales ni copias de datos reales. Las variables de conexión y autenticación se gestionan en el entorno administrado.
 
-La suite de Vitest cubre el cálculo de normalización, ponderaciones, brechas, compatibilidad explicable, integridad mínima del catálogo sintético, el contrato de la recomendación asistida, el Perfilador UCorp F1 y campañas. Las pruebas de campañas validan ventanas, ciclo de vida, participantes, hitos de apertura/mitad/cierre, pausas, idempotencia y el callback cron autenticado. El comando `pnpm test:a11y` ejecuta Axe sobre la vista inicial con reglas WCAG 2 A, AA y 2.1 AA. La extensión hacia datos reales debe añadir pruebas de autorización de servidor, separación entre tenants, persistencia de talento, auditoría y flujos de extremo a extremo.
+## 15. Documentación de referencia
 
-## Integraciones pendientes
+Este README es la guía de entrada. Para procedimientos más específicos, consulte los documentos vinculados a continuación antes de operar un proceso no habitual.
 
-| Integración | Preparación actual | Requisito antes de conectar |
-|---|---|---|
-| Okta | Selector de rol de demostración y contratos de UI. | OIDC/SAML, mapeo de grupos y RBAC de servidor. |
-| HRIS | Modelo de persona, equipo, cargo y tenant. | Contrato de sincronización, retención y revisión de identidad. |
-| IttiAcademy | Rutas genéricas ya operativas en la ficha 360°. | Catálogo de aprendizaje aprobado, taxonomía de contenidos y consentimiento de datos. |
-| Data Lake / reportería | Métricas agregadas y exportación simulada. | Anonimización, catálogo semántico y política de acceso. |
-| Modelo de IA integrado | Ruta educativa estructurada, validada y ejecutada en servidor. | Revisión humana, RBAC, evaluación de sesgo, límite de uso, auditoría sin contenido sensible y proceso de corrección. |
+| Documento | Cuándo consultarlo |
+|---|---|
+| [Operación de identidad y control de acceso](docs/access-control-operation.md) | Alta, baja, suspensión, roles y límites de permisos. |
+| [Operación del constructor persistente](docs/persistent-instrument-operation.md) | Diseño, revisión y aprobación de instrumentos. |
+| [Operación persistente de evaluaciones](docs/evaluation-persistence-operation.md) | Campañas, asignaciones, respuestas, diagnóstico y aislamiento. |
+| [Panel de resultados persistidos](docs/results-dashboard-operation.md) | Filtros, métricas, detalle protegido y CSV auditado. |
+| [Almacenamiento de participantes reales](docs/pilot-real-participants-storage.md) | Preparación para incorporar la cohorte real del piloto. |
+| [Hoja de ruta E2E](docs/e2e-talent-platform-roadmap.md) | Alcance actual, brechas y evolución priorizada. |
 
-## Limitaciones conscientes
+## Referencias
 
-La plataforma ya implementa autenticación OAuth aprobada, roles persistentes, aislamiento del workspace por tenant/piloto/participante y repositorios de respuestas/diagnósticos. Aún no ofrece un ciclo E2E en la interfaz: el constructor, campañas, formularios de evaluación, diagnóstico visible, reportes y movilidad continúan total o parcialmente en modo demostración. Tampoco incluye importación HRIS, exportación de archivos reales, carga de evidencias ni integraciones corporativas externas. La secuencia de implementación y los criterios de salida están definidos en la hoja de ruta E2E.
+[1] [Operación de identidad y control de acceso](docs/access-control-operation.md)
 
-## Referencia visual
+[2] [Operación persistente de evaluaciones — MySQL/TiDB](docs/evaluation-persistence-operation.md)
 
-[1] [ITTI — Sitio institucional](https://www.itti.digital/)
-[2] [Trazabilidad del Perfilador UCorp F1](docs/pilot-f1-traceability.md)
+[3] [Operación del constructor persistente de instrumentos](docs/persistent-instrument-operation.md)
+
+[4] [Campañas de evaluación y avisos internos](docs/campaigns-operation.md)
+
+[5] [Panel de resultados persistidos](docs/results-dashboard-operation.md)

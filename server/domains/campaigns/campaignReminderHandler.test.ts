@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   runAllCampaignReminders: vi.fn(),
 }));
 
-vi.mock("./_core/sdk", () => ({
+vi.mock("../../_core/sdk", () => ({
   sdk: { authenticateRequest: mocks.authenticateRequest },
 }));
 

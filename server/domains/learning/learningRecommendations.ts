@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { invokeLLM, listLLMModels } from "./_core/llm";
+import { invokeLLM, listLLMModels } from "../../_core/llm";
 
 const competencySignalSchema = z.object({
   name: z.string().trim().min(2).max(80),

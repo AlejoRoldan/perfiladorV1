@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import type { AccessRole } from "../shared/accessControl";
+import type { AccessRole } from "../../../shared/accessControl";
 
 export type PilotScope = {
   tenantId: string;

@@ -2,11 +2,11 @@ import { COOKIE_NAME } from "@shared/const";
 import { TRPCError } from "@trpc/server";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { learningRecommendationInputSchema, recommendLearningPath } from "./learningRecommendations";
+import { learningRecommendationInputSchema, recommendLearningPath } from "./domains/learning/learningRecommendations";
 import { adminProcedure, peopleOpsProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { accessRoles, accessStatuses } from "../shared/accessControl";
 import { listPlatformUsers, updatePlatformUserAccess } from "./db";
-import { buildSyntheticReportExport } from "./reportExports";
+import { buildSyntheticReportExport } from "./domains/reporting/reportExports";
 import {
   addPilotParticipant,
   approvePilotInstrumentDraft,
@@ -32,7 +32,7 @@ import {
   submitPilotInstrumentForReview,
   submitOwnAssessment,
   updatePilotInstrumentDraft,
-} from "./pilotRepository";
+} from "./domains/pilot/pilotRepository";
 import { z } from "zod";
 import {
   createCampaign,
@@ -40,7 +40,7 @@ import {
   getCampaignStatusAt,
   listCampaignSummaries,
   updateCampaignStatus,
-} from "./campaigns";
+} from "./domains/campaigns/campaigns";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly

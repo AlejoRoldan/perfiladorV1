@@ -5,8 +5,8 @@ import {
   assessmentCampaignReminderSchedulers,
   assessmentCampaigns,
   type AssessmentCampaign,
-} from "../drizzle/schema";
-import { getDb } from "./db";
+} from "../../../drizzle/schema";
+import { getDb } from "../../db";
 import {
   assertCampaignWindow,
   buildReminderCopy,

@@ -176,3 +176,5 @@
 - [x] Preparar un commit trazable con los cambios publicados más recientes.
 - [x] Sincronizar la rama remota, verificar el commit resultante y documentar el estado de GitHub.
 - [x] Sincronizar específicamente el repositorio AlejoRoldan/perfiladorV1 en la rama perfiladorOPOSV1 verificada.
+- [x] Redactar un README operativo detallado para el equipo sobre el uso del panel de control y la gestión segura de evaluaciones.
+- [x] Reorganizar el repositorio con una taxonomía clara, guías de contribución y puntos de orientación para desarrollo continuo.

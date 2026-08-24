@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { isCampaignReminderScheduler, runAllCampaignReminders } from "./campaigns";
-import { sdk } from "./_core/sdk";
+import { sdk } from "../../_core/sdk";
 
 /** HTTP entry point for the platform-managed hourly reminder task. */
 export async function campaignReminderHandler(req: Request, res: Response) {
