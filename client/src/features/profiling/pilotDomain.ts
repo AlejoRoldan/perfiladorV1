@@ -1,5 +1,5 @@
 export type ProfilingFlow = "values" | "competencies";
-export type ProfilingType = "por_pedido" | "obligatorio" | "matriz_capacidades" | "eval_tecnica";
+export type ProfilingType = "por_pedido" | "obligatorio" | "matriz_capacidades" | "eval_tecnica" | "engineering_self_assessment" | "engineering_manager_review" | "engineering_calibration";
 export type SessionExtension = "rapid" | "standard" | "deep";
 export type SessionState = "draft" | "generating" | "in_review" | "generation_degraded" | "generation_failed" | "approved" | "active" | "closed";
 export type GenerationStatus = "pending" | "running" | "completed" | "degraded" | "failed";
@@ -13,7 +13,7 @@ export type PilotDimension = {
   flow: ProfilingFlow;
   expected: number;
   weight: number;
-  source: "manual" | "weel_export" | "seed_itti";
+  source: "manual" | "weel_export" | "seed_itti" | "itti_engineering_matrix";
 };
 
 export type PilotQuestion = {
@@ -55,6 +55,9 @@ export const sessionTypeLabels: Record<ProfilingType, string> = {
   obligatorio: "Obligatorio",
   matriz_capacidades: "Matriz de capacidades",
   eval_tecnica: "Evaluación técnica",
+  engineering_self_assessment: "Autoevaluación Engineering · matriz Itti",
+  engineering_manager_review: "Evaluación de manager Engineering · matriz Itti",
+  engineering_calibration: "Calibración Engineering · matriz Itti",
 };
 
 export const extensionDefinitions: Record<SessionExtension, { label: string; duration: string; questions: string }> = {

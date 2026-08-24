@@ -62,3 +62,117 @@
 - [x] Incorporar el código, documentación derivada y documentos fuente autorizados en la rama destino.
 - [x] Validar que el proyecto migrado compila, mantiene sus pruebas y conserva los documentos requeridos.
 - [x] Crear un commit trazable y subir la migración a `perfiladorOPOSV1`.
+- [x] Auditar la licencia, estructura y capacidades de interactividad de taste-skill.
+- [x] Mapear patrones compatibles contra los flujos de People & Culture y Perfilador F1.
+- [x] Presentar una recomendación priorizada sin incorporar dependencias externas.
+- [x] Documentar prioridades, riesgos y patrones de taste-skill aplicables al frontend de la plataforma.
+- [x] Entregar a Alejo una recomendación ordenada de adopción sin añadir dependencias externas.
+- [x] Auditar puntos de carga, error, éxito, foco y edición contextual en People & Culture y Perfilador F1.
+- [x] Implementar feedback táctil y de foco accesible en controles de alta prioridad.
+- [x] Añadir estados compuestos de carga, error, vacío y éxito para operaciones críticas de evaluación y perfilamiento.
+- [x] Sustituir divulgación contextual innecesaria por paneles y secciones expandibles accesibles.
+- [x] Verificar con pruebas, Axe y capturas responsive la mejora de interacción.
+- [x] Documentar los patrones adoptados y publicar el checkpoint de la mejora.
+- [x] Auditar explícitamente los flujos de People & Culture del panel principal y registrar puntos de carga, error, éxito, vacío, foco y edición contextual.
+- [x] Aplicar feedback de foco y pulsación en controles prioritarios del panel principal de People & Culture.
+- [x] Implementar estados completos de carga, error, vacío y éxito en las operaciones críticas de evaluación y perfiles del panel principal.
+- [x] Documentar o implementar divulgación progresiva accesible en las vistas principales con evidencia verificable.
+- [x] Añadir y validar estados explícitos de carga, error y éxito en operaciones principales de evaluaciones y perfiles de People & Culture.
+- [x] Guardar el checkpoint de la mejora de interacción y referenciarlo en la entrega.
+- [x] Guardar un checkpoint posterior a las mejoras del constructor y del perfil 360°.
+- [x] Referenciar explícitamente el identificador de ese checkpoint al entregar la mejora de interacción.
+- [x] Auditar los criterios de aceptación de H1–H8 contra la demo, el código y las pruebas actuales.
+- [x] Identificar y documentar las brechas funcionales, de persistencia o de seguridad que impidan considerar una HU completa.
+- [x] Presentar a Alejo el estado por HU y recomendar el siguiente incremento de implementación.
+- [x] Habilitar una URL de validación directa para el constructor de evaluaciones mejorado.
+- [x] Implementar y probar estados explícitos de carga, error y éxito en operaciones principales del perfil 360° de People & Culture.
+- [x] Capturar la validación visual del perfil 360° con sus estados mejorados y actualizar la evidencia de calidad.
+- [x] Implementar persistencia local versionada de las respuestas parciales de H6 por sesión y colaborador demo.
+- [x] Restaurar el progreso pendiente de H6 al recargar y eliminarlo de forma segura después del envío inmutable.
+- [x] Añadir pruebas automatizadas y validación visual del recorrido de persistencia de H6.
+- [x] Validar visualmente H6 respondiendo, guardando, recargando y comprobando la restauración de respuestas en la demo.
+- [x] Documentar la evidencia visual específica de persistencia y restauración de H6 en los controles de calidad.
+- [x] Auditar los componentes de interfaz actuales y mapear las reglas aplicables de DESIGN(2).md al panel administrativo.
+- [x] Definir tokens corporativos oscuros en OKLCH, tipografías Urbanist/Poppins, superficies glassmórficas y glows accesibles.
+- [x] Aplicar el lenguaje visual neon oscuro en el layout, tarjetas, botones, navegación y Perfilador F1 sin alterar los flujos.
+- [x] Verificar escritorio y móvil, pruebas y accesibilidad; documentar la adopción del sistema de diseño corporativo.
+- [x] Validar contraste, foco y accesibilidad de los acentos y glows del tema oscuro tras el rediseño.
+- [x] Documentar los tokens OKLCH, las tipografías y los criterios de uso accesible del sistema visual corporativo.
+- [x] Analizar la estructura, taxonomía, roles, niveles y reglas de la matriz oficial de competencias de People & Culture.
+- [x] Modelar y documentar el mapeo de la matriz hacia roles, seniority, competencias y tipos de evaluación de la plataforma.
+- [x] Sustituir los catálogos demo relevantes por datos derivados de la matriz y actualizar los instrumentos asociados.
+- [x] Añadir pruebas de integridad de la matriz, validar la experiencia en la interfaz y documentar la procedencia de los datos.
+- [x] Documentar el mapeo verificable de la matriz oficial hacia roles, seniority, competencias, anclas y tipos de evaluación.
+- [x] Referenciar la documentación de la matriz desde la trazabilidad del Perfilador para facilitar la auditoría de procedencia.
+- [x] Corregir el contexto visible y la composición del constructor de Engineering detectados durante la revisión visual.
+- [x] Definir el canal, la frecuencia y la zona horaria operativa de los recordatorios de campañas.
+- [x] Modelar campañas, participantes, ventanas de evaluación, estado y trazabilidad de recordatorios en la base de datos.
+- [x] Implementar la creación y administración de campañas con selección de participantes y fechas de inicio y cierre.
+- [x] Implementar recordatorios automáticos idempotentes, con control de ejecución y registro de entregas.
+- [x] Añadir pruebas de ciclo de vida, permisos y recordatorios; validar la interfaz y documentar la operación.
+- [x] Verificar de extremo a extremo la creación persistente de una campaña con participantes, fechas y aparición en el listado.
+- [x] Probar el handler programado y el repositorio persistente para confirmar entregas, idempotencia en reintentos y detención al pausar o cerrar.
+- [x] Documentar explícitamente el límite de permisos de campañas en la demo standalone por la exclusión aprobada de H1.
+- [x] Sustituir los avisos programados por campaña por un planificador global de campañas compatible con la demo standalone sin autenticación.
+- [x] Publicar la funcionalidad antes de crear y activar el planificador global gestionado de avisos.
+- [x] Crear y persistir el heartbeat global de campañas con taskUid, cron y zona horaria en el registro de schedulers.
+- [x] Confirmar en los logs la primera ejecución real del scheduler global sobre el entorno publicado y registrar su respuesta.
+- [x] Consolidar en controles de calidad taskUid, fecha, HTTP y respuesta de la primera ejecución real del scheduler.
+- [x] Documentar en el README la arquitectura de campañas y el planificador global de avisos internos.
+- [x] Documentar la activación única e idempotente del scheduler global posterior a la publicación.
+- [x] Analizar el mockup de Perfilador entregado y documentar sus reglas como fuente de verdad visual y funcional.
+- [x] Contrastar el mockup con el Perfilador actual y priorizar los ajustes de estructura, contenido e interacción necesarios.
+- [x] Ajustar el Perfilador para reflejar la fuente de verdad sin perder los flujos F1, accesibilidad ni trazabilidad existentes.
+- [x] Validar escritorio y móvil, documentar la alineación lograda y preparar el análisis de almacenamiento para los 20 participantes del piloto.
+- [x] Analizar el mockup standalone definitivo y reemplazar la referencia visual anterior en la documentación de fuente de verdad.
+- [x] Repriorizar e implementar los ajustes del Perfilador a partir del mockup standalone definitivo.
+- [x] Corregir el ancho del selector de rol y el desbordamiento de tipos de evaluación detectados en la revisión visual del mockup definitivo.
+- [x] Reorganizar la navegación de pasos del shell standalone para evitar etiquetas superpuestas en móvil.
+- [x] Implementar Inicio/Diagnósticos, Sesiones y Crear sesión en cuatro bloques dentro del shell secuencial de Talento.
+- [x] Retirar OpenAPI de la navegación principal y sustituir las pestañas técnicas restantes por el recorrido lineal del mockup definitivo.
+- [x] Validar y documentar la cobertura completa de las ocho vistas definidas en la fuente de verdad standalone.
+- [x] Ajustar la grilla de acciones de Inicio para preservar la legibilidad del recorrido secuencial en el ancho disponible del panel.
+- [x] Reubicar el botón Crear sesión para evitar su recorte en el encabezado móvil de Inicio.
+- [x] Implementar una vista separada de Sesiones con el pipeline visible, distinta de Crear sesión, según el mockup standalone definitivo.
+- [x] Implementar el Reporte propio del colaborador como vista de desarrollo separada del Diagnóstico de Talento.
+- [x] Completar y documentar la cobertura verificable de las ocho vistas del mockup standalone antes de cerrar el ajuste integral.
+- [x] Diseñar el almacenamiento aislado, auditable y exportable de los 20 participantes reales del piloto de Itti.
+- [x] Definir la matriz de roles y permisos mínimos para People & Culture, colaborador y administración técnica.
+- [x] Implementar inicio de sesión corporativo y una pantalla de acceso segura sin selectores de rol simulados.
+- [x] Aplicar autorización de servidor verificable a reportes y exportaciones, además de campañas.
+- [x] Documentar el límite del Perfilador mientras opera solo con datos sintéticos compilados en el cliente.
+- [x] Añadir pruebas negativas de permisos para exportaciones y validar el incremento de autenticación.
+- [x] Guardar el checkpoint publicado del incremento de autenticación y control de acceso.
+- [x] Definir el modelo persistente del Perfilador con claves obligatorias de tenant, campaña y participante.
+- [x] Crear migraciones y repositorios de servidor que apliquen aislamiento y autorización en cada consulta.
+- [x] Conectar el acceso inicial del Perfilador al workspace persistente sin mezclar datos demo; los flujos de respuestas y diagnósticos ya cuentan con procedimientos aislados y se habilitan después de crear campaña, instrumento y asignación.
+- [x] Añadir pruebas de aislamiento cruzado y documentar la migración operativa.
+- [x] Guardar el checkpoint publicado del repositorio persistente aislado.
+- [x] Verificar que no exista un tenant o piloto persistente con los códigos de Grupo Vázquez y UCorp F1.
+- [x] Aprovisionar el tenant Grupo Vázquez y el piloto real UCorp F1 sin participantes ni respuestas.
+- [x] Validar el workspace creado, documentar sus identificadores operativos y preparar la carga segura de participantes.
+- [x] Guardar el checkpoint publicado del aprovisionamiento inicial del tenant y piloto reales.
+- [x] Inventariar los flujos actuales de evaluación, perfilamiento, campañas, datos persistentes y controles de acceso.
+- [x] Identificar brechas funcionales, técnicas, de operación y gobierno que impiden un proceso E2E con datos reales.
+- [x] Diseñar una hoja de ruta priorizada con iniciativas, dependencias, hitos y criterios de salida.
+- [x] Documentar la auditoría E2E y presentar el plan de evolución para People & Culture de Itti.
+- [x] Diagnosticar y eliminar superposiciones de capas, transparencias excesivas y texto de bajo contraste en Evaluaciones.
+- [x] Reorganizar la navegación de Evaluaciones para separar claramente el resumen, las campañas, los instrumentos y las acciones principales.
+- [x] Reemplazar las señales demo del flujo de evaluación visible por estados, pasos y datos operativos comprensibles.
+- [x] Validar contraste, jerarquía, navegación y recorridos de evaluación en escritorio y móvil antes de publicar.
+- [x] Definir la estructura versionada de un instrumento persistente, sus reglas de validación y su ciclo de aprobación.
+- [x] Implementar el editor persistente de instrumento para People & Culture dentro del ciclo del piloto.
+- [x] Implementar revisión, aprobación inmutable, checksum y trazabilidad de los instrumentos reales.
+- [x] Añadir pruebas, documentación operativa y verificación visual del constructor persistente antes de publicar.
+- [x] Auditar el paso persistente entre instrumento aprobado, campaña, asignación, respuesta y diagnóstico.
+- [x] Completar procedimientos de servidor para crear campañas, asignar evaluaciones y calcular diagnósticos reales con aislamiento estricto.
+- [x] Implementar en la interfaz la asignación de evaluaciones y la bandeja de respuestas conectadas a MySQL/TiDB.
+- [x] Validar el ciclo E2E con datos de prueba aislados, pruebas de autorización y documentación operativa antes de publicar.
+- [x] Definir indicadores, filtros, detalle y campos exportables del panel de resultados persistidos.
+- [x] Implementar consultas agregadas y exportaciones CSV autorizadas por tenant, piloto y campaña.
+- [x] Construir el panel de control de resultados para People & Culture con estados vacíos y detalle de diagnósticos.
+- [x] Validar permisos, trazabilidad de exportación, responsive y documentación operativa antes de publicar.
+- [x] Verificar el remoto y la rama objetivo del repositorio de Itti Talent Compass antes de sincronizar.
+- [ ] Preparar un commit trazable con los cambios publicados más recientes.
+- [ ] Sincronizar la rama remota, verificar el commit resultante y documentar el estado de GitHub.
+- [ ] Sincronizar específicamente el repositorio AlejoRoldan/perfiladorV1 en la rama perfiladorOPOSV1 verificada.

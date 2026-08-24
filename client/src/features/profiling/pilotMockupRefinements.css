@@ -1,0 +1,41 @@
+.pilot-standalone .pilot-context {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pilot-standalone .pilot-context label {
+  min-width: 0;
+}
+
+.pilot-standalone .pilot-context label:last-child {
+  grid-column: 1 / -1;
+}
+
+.pilot-standalone .pilot-matrix-context {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+.pilot-standalone .pilot-evaluation-type {
+  grid-template-columns: minmax(0, 1fr) minmax(6.5rem, auto);
+}
+
+.pilot-standalone .pilot-evaluation-type small {
+  max-width: 11rem;
+  white-space: normal;
+  text-align: right;
+  line-height: 1.25;
+}
+
+@media (max-width: 760px) {
+  .pilot-standalone .pilot-context,
+  .pilot-standalone .pilot-matrix-context {
+    grid-template-columns: 1fr;
+  }
+
+  .pilot-standalone .pilot-context label:last-child {
+    grid-column: auto;
+  }
+
+  .pilot-standalone .pilot-evaluation-type small {
+    max-width: 8.5rem;
+  }
+}

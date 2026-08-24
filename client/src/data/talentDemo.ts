@@ -47,9 +47,14 @@ export type Opportunity = {
 export const companies = ["Vázquez Tecnología", "Vázquez Servicios", "Vázquez Logística"];
 export const areas = ["Producto", "Tecnología", "Operaciones", "Comercial", "Experiencia", "Finanzas", "Personas", "Riesgo"];
 export const teams = ["Plataformas", "Innovación", "Soporte", "Datos", "Canales", "Procesos", "Ventas B2B", "Personas", "Calidad", "Infraestructura", "Nexo", "Digital", "Control", "Learning", "Ecosistema"];
-export const roles = ["Analista de datos", "Product Owner", "Líder de operaciones", "Especialista de personas", "Ingeniero de software", "Diseñador de servicio", "Gestor comercial", "Analista de riesgo", "Coordinador de soporte", "Scrum Master", "Arquitecto de soluciones", "HRBP", "Especialista de aprendizaje", "Analista financiero", "Consultor de procesos", "Líder de experiencia", "DevOps", "Auditor interno", "Growth manager", "Coordinador de calidad"];
+export const roles = ["Analista de datos", "Product Owner", "Líder de operaciones", "Especialista de personas", "Ingeniero de software", "Technical Lead", "Engineering Manager", "Diseñador de servicio", "Gestor comercial", "Analista de riesgo", "Coordinador de soporte", "Scrum Master", "Arquitecto de soluciones", "HRBP", "Especialista de aprendizaje", "Analista financiero", "Consultor de procesos", "Líder de experiencia", "DevOps", "Auditor interno", "Growth manager", "Coordinador de calidad"];
+export const engineeringSeniorityLevels = ["Jr Engineer", "Ssr Engineer", "Sr Engineer", "Technical Lead", "Engineering Manager"];
 
 export const competencies: Competency[] = [
+  { id: "eng-foundations", name: "Fundamentos técnicos y operativos", domain: "Engineering · Matriz Itti", expected: 2 },
+  { id: "eng-domain", name: "Dominio y visión", domain: "Engineering · Matriz Itti", expected: 2 },
+  { id: "eng-ownership", name: "Ownership y mentoring", domain: "Engineering · Matriz Itti", expected: 2 },
+  { id: "eng-communication", name: "Comunicación y liderazgo", domain: "Engineering · Matriz Itti", expected: 2 },
   { id: "strategic", name: "Pensamiento estratégico", domain: "Visión", expected: 4 },
   { id: "communication", name: "Comunicación", domain: "Relación", expected: 3 },
   { id: "leadership", name: "Liderazgo", domain: "Relación", expected: 4 },
@@ -130,6 +135,9 @@ export const assessmentTemplates: AssessmentTemplate[] = [
   { id: "a-003", name: "Perfil de habilidades digitales", audience: "Tecnología y datos", status: "Borrador", due: "Sin fecha", assigned: 0, completion: 0, competencies: ["Análisis de datos", "Adaptabilidad"], questions: ["Seleccione las herramientas que utiliza.", "Resuelva el caso de priorización."] },
   { id: "a-004", name: "Experiencia de cliente", audience: "Canales y comercial", status: "Publicada", due: "18 sep 2026", assigned: 42, completion: 36, competencies: ["Comunicación", "Colaboración"], questions: ["Describa una mejora para una experiencia compleja."] },
   { id: "a-005", name: "Preparación para movilidad", audience: "Talento identificado", status: "Archivada", due: "Cerrada", assigned: 18, completion: 100, competencies: ["Pensamiento estratégico", "Liderazgo"], questions: ["Indique su interés de carrera."] },
+  { id: "a-006", name: "Autoevaluación Engineering · Matriz Itti", audience: "Software Engineering", status: "Borrador", due: "Sin fecha", assigned: 0, completion: 0, competencies: ["Fundamentos técnicos y operativos", "Dominio y visión", "Ownership y mentoring", "Comunicación y liderazgo"], questions: ["Reflexione sobre la calidad y operación de los servicios bajo su responsabilidad.", "Describa cómo conecta una decisión técnica con una necesidad de producto."] },
+  { id: "a-007", name: "Evaluación de manager Engineering · Matriz Itti", audience: "Managers Engineering", status: "Borrador", due: "Sin fecha", assigned: 0, completion: 0, competencies: ["Fundamentos técnicos y operativos", "Dominio y visión", "Ownership y mentoring", "Comunicación y liderazgo"], questions: ["Describa evidencia observable de ownership y colaboración.", "Valore la autonomía frente a las anclas del rol."] },
+  { id: "a-008", name: "Calibración Engineering · Matriz Itti", audience: "People & Culture y liderazgo", status: "Borrador", due: "Sin fecha", assigned: 0, completion: 0, competencies: ["Fundamentos técnicos y operativos", "Dominio y visión", "Ownership y mentoring", "Comunicación y liderazgo"], questions: ["Registre evidencia y acuerdos de calibración; no emita una decisión automática."] },
 ];
 
 export const opportunities: Opportunity[] = [

@@ -1,10 +1,17 @@
-import DashboardLayout, { type AppView, type DemoRole } from "@/components/DashboardLayout";
-import PilotProfiler from "@/features/profiling/PilotProfiler";
-import { assessmentTemplates, auditEvents, competencies, dashboardBars, demoEmployees, opportunities, type Employee } from "@/data/talentDemo";
+import DashboardLayout, { type AppView } from "@/components/DashboardLayout";
+import "@/components/InteractionFeedback.css";
+import { DashboardLayoutSkeleton } from "@/components/DashboardLayoutSkeleton";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { startLogin } from "@/const";
+import PersistentPilotWorkspace from "@/features/profiling/PersistentPilotWorkspace";
+import AssessmentOperationsHub from "@/features/assessments/AssessmentOperationsHub";
+import { auditEvents, competencies, dashboardBars, demoEmployees, opportunities, type Employee } from "@/data/talentDemo";
+import { getDirectoryState } from "@/lib/interactionStates";
 import { calculateRoleMatch, calculateWeightedScore } from "@/lib/talentEngine";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, ArrowRight, BarChart3, Check, ChevronRight, CircleAlert, ClipboardCheck, Download, ExternalLink, Filter, Info, LayoutTemplate, Loader2, Plus, Search, ShieldCheck, SlidersHorizontal, Sparkles, Target, UsersRound, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { roleLabels, type AccessRole } from "@shared/accessControl";
 import { Bar, BarChart, CartesianGrid, Cell, Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip as ChartTooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
@@ -45,6 +52,7 @@ function Overview({ onNavigate, onProfile }: { onNavigate: (view: AppView) => vo
       <MetricCard label="Brechas críticas" value="12" delta="3 áreas" meta="requieren conversación" tone="green" />
     </div>
     <div className="insight-strip"><div className="insight-icon"><Sparkles size={19} /></div><p><strong>Señal de movilidad.</strong> Hay 7 colaboradores con alta compatibilidad para movimientos internos. Explora las coincidencias y las brechas antes de iniciar una conversación.</p><button onClick={() => onNavigate("mobility")}>Explorar candidatos <ArrowRight size={16} /></button></div>
+    <details className="context-details"><summary><Info size={15} />Cómo interpretar estas señales</summary><p>Los indicadores agregados priorizan temas para conversación. Antes de una acción de talento, revisa evidencia, fecha de la evaluación y contexto del rol.</p></details>
     <div className="analysis-grid top-analysis">
       <article className="data-panel radar-panel"><div className="panel-header"><div><h2>Perfil de competencias</h2><p>Promedio de capacidades observadas en el grupo.</p></div><StatusPill tone="green">Muestra: 80</StatusPill></div><div className="chart-box radar-chart" aria-label="Gráfico de radar: competencias del grupo comparadas con nivel esperado"><ResponsiveContainer width="100%" height="100%"><RadarChart data={radarData} outerRadius="72%"><PolarGrid stroke="var(--chart-grid)" /><PolarAngleAxis dataKey="skill" tick={{ fill: "var(--muted)", fontSize: 11 }} /><Radar name="Grupo" dataKey="grupo" stroke="var(--accent)" fill="var(--accent)" fillOpacity={0.22} strokeWidth={2.2} /><Radar name="Esperado" dataKey="esperado" stroke="var(--chart-violet)" fill="var(--chart-violet)" fillOpacity={0.05} strokeWidth={1.8} /><Legend iconSize={9} wrapperStyle={{ fontSize: 12 }} /></RadarChart></ResponsiveContainer></div>{showRadarTable && <div className="chart-table-wrap" role="region" aria-label="Datos alternativos del gráfico de radar" tabIndex={0}><table className="chart-table"><caption>Competencias: nivel del grupo y nivel esperado</caption><thead><tr><th>Competencia</th><th>Grupo</th><th>Esperado</th><th>Diferencia</th></tr></thead><tbody>{radarData.map(row => <tr key={row.skill}><th>{row.skill}</th><td>{row.grupo}</td><td>{row.esperado}</td><td className={row.grupo >= row.esperado ? "positive" : "negative"}>{row.grupo - row.esperado > 0 ? "+" : ""}{row.grupo - row.esperado}</td></tr>)}</tbody></table></div>}<div className="chart-caption"><span><i className="legend-dot green" /> Grupo</span><span><i className="legend-dot violet" /> Nivel esperado</span><button onClick={() => setShowRadarTable(!showRadarTable)} aria-expanded={showRadarTable}>{showRadarTable ? "Ocultar tabla" : "Ver tabla accesible"}</button></div></article>
       <article className="data-panel"><div className="panel-header"><div><h2>Preparación por área</h2><p>Capacidad para asumir retos versus brechas de desarrollo.</p></div><button className="icon-button" aria-label="Ver detalle de preparación" onClick={() => onNavigate("reports")}><ChevronRight size={18} /></button></div><div className="chart-box"><ResponsiveContainer width="100%" height="100%"><BarChart data={dashboardBars} margin={{ top: 12, right: 4, bottom: 0, left: -18 }}><CartesianGrid vertical={false} stroke="var(--chart-grid)" /><XAxis dataKey="area" tick={{ fill: "var(--muted)", fontSize: 11 }} axisLine={false} tickLine={false} /><YAxis tick={{ fill: "var(--muted)", fontSize: 10 }} axisLine={false} tickLine={false} /><ChartTooltip cursor={{ fill: "var(--accent-soft)" }} /><Bar dataKey="readiness" name="Preparación" fill="var(--accent)" radius={[5, 5, 1, 1]} /><Bar dataKey="gap" name="Brecha" fill="var(--chart-violet)" radius={[5, 5, 1, 1]} /></BarChart></ResponsiveContainer></div>{showBarTable && <div className="chart-table-wrap" role="region" aria-label="Datos alternativos del gráfico de preparación por área" tabIndex={0}><table className="chart-table"><caption>Preparación y brecha por área</caption><thead><tr><th>Área</th><th>Preparación</th><th>Brecha</th></tr></thead><tbody>{dashboardBars.map(row => <tr key={row.area}><th>{row.area}</th><td>{row.readiness}</td><td>{row.gap}</td></tr>)}</tbody></table></div>}<div className="panel-foot"><span>Mayor oportunidad: <strong>Comercial</strong></span><button onClick={() => setShowBarTable(!showBarTable)} aria-expanded={showBarTable}>{showBarTable ? "Ocultar tabla" : "Ver tabla accesible"}</button></div></article>
@@ -59,7 +67,8 @@ function Overview({ onNavigate, onProfile }: { onNavigate: (view: AppView) => vo
 function People({ onProfile }: { onProfile: (employee: Employee) => void }) {
   const [query, setQuery] = useState("");
   const rows = useMemo(() => demoEmployees.filter(employee => `${employee.name} ${employee.area} ${employee.role}`.toLowerCase().includes(query.toLowerCase())).slice(0, 12), [query]);
-  return <div className="view-stack"><SectionHeading eyebrow="Directorio de talento" title="Colaboradores" description="Una muestra navegable de perfiles ficticios, resultados y oportunidades de desarrollo." action={<button className="button primary" onClick={() => toast.success("La importación masiva quedará disponible al conectar el HRIS.")}><Plus size={17} />Importar colaboradores</button>} /><div className="toolbar"><label className="search-field"><Search size={17} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar por nombre, área o cargo" aria-label="Buscar colaboradores" /></label><button className="button secondary" onClick={() => toast.info("Filtros demo: empresa, área, equipo y seniority.")}><Filter size={17} />Filtrar</button><span className="result-count">{rows.length} de 80 colaboradores</span></div><article className="table-panel"><table className="employee-table"><thead><tr><th>Colaborador</th><th>Organización</th><th>Última evaluación</th><th>Desempeño</th><th>Potencial</th><th>Estado</th><th><span className="sr-only">Abrir</span></th></tr></thead><tbody>{rows.map(employee => <tr key={employee.id}><td><button className="person-cell" onClick={() => onProfile(employee)}><span className="avatar av-${employee.id.slice(-1)}">{employee.initials}</span><span><strong>{employee.name}</strong><small>{employee.role} · {employee.seniority}</small></span></button></td><td><span>{employee.company}</span><small>{employee.area} · {employee.team}</small></td><td>{employee.lastEvaluation}</td><td><span className="score-cell">{employee.performance}<i style={{ width: `${employee.performance}%` }} /></span></td><td><span className="score-cell violet-score">{employee.potential}<i style={{ width: `${employee.potential}%` }} /></span></td><td><StatusPill tone={employee.status === "Al día" ? "green" : employee.status === "En evaluación" ? "violet" : "amber"}>{employee.status}</StatusPill></td><td><button className="row-action" onClick={() => onProfile(employee)} aria-label={`Ver perfil de ${employee.name}`}><ChevronRight size={18} /></button></td></tr>)}</tbody></table></article></div>;
+  const directoryState = getDirectoryState(query, rows.length);
+  return <div className="view-stack"><SectionHeading eyebrow="Directorio de talento" title="Colaboradores" description="Una muestra navegable de perfiles ficticios, resultados y oportunidades de desarrollo." action={<button className="button primary" onClick={() => toast.success("La importación masiva quedará disponible al conectar el HRIS.")}><Plus size={17} />Importar colaboradores</button>} /><div className="toolbar"><label className="search-field"><Search size={17} /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar por nombre, área o cargo" aria-label="Buscar colaboradores" /></label><button className="button secondary" onClick={() => toast.info("Filtros demo: empresa, área, equipo y seniority.")}><Filter size={17} />Filtrar</button><span className="result-count" aria-live="polite">{rows.length} de 80 colaboradores</span></div>{directoryState === "empty" ? <article className="table-panel directory-empty" role="status"><Search size={24} /><strong>No encontramos coincidencias</strong><p>Probá con un nombre, área o cargo diferente. La demostración usa datos sintéticos y contiene 80 colaboradores.</p><button className="button secondary" onClick={() => setQuery("")}>Limpiar búsqueda</button></article> : <article className="table-panel"><table className="employee-table"><thead><tr><th>Colaborador</th><th>Organización</th><th>Última evaluación</th><th>Desempeño</th><th>Potencial</th><th>Estado</th><th><span className="sr-only">Abrir</span></th></tr></thead><tbody>{rows.map(employee => <tr key={employee.id}><td><button className="person-cell" onClick={() => onProfile(employee)}><span className={`avatar av-${employee.id.slice(-1)}`}>{employee.initials}</span><span><strong>{employee.name}</strong><small>{employee.role} · {employee.seniority}</small></span></button></td><td><span>{employee.company}</span><small>{employee.area} · {employee.team}</small></td><td>{employee.lastEvaluation}</td><td><span className="score-cell">{employee.performance}<i style={{ width: `${employee.performance}%` }} /></span></td><td><span className="score-cell violet-score">{employee.potential}<i style={{ width: `${employee.potential}%` }} /></span></td><td><StatusPill tone={employee.status === "Al día" ? "green" : employee.status === "En evaluación" ? "violet" : "amber"}>{employee.status}</StatusPill></td><td><button className="row-action" onClick={() => onProfile(employee)} aria-label={`Ver perfil de ${employee.name}`}><ChevronRight size={18} /></button></td></tr>)}</tbody></table></article>}</div>;
 }
 
 function SkillBars({ employee }: { employee: Employee }) {
@@ -97,6 +106,21 @@ type LearningRecommendation = {
   humanReview: string;
 };
 
+function ProfileOperations({ employee, onMobility }: { employee: Employee; onMobility: () => void }) {
+  const [operation, setOperation] = useState<{ state: "loading" | "success" | "error"; message: string } | null>(null);
+  const [comparisonReady, setComparisonReady] = useState(false);
+  const requestReview = () => {
+    setOperation({ state: "loading", message: "Estamos preparando una solicitud trazable para People & Culture." });
+    window.setTimeout(() => setOperation(employee.evidence > 0 ? { state: "success", message: "Solicitud registrada en la demostración con la evidencia disponible." } : { state: "error", message: "No hay evidencia suficiente para abrir una revisión. Añadí una fuente antes de continuar." }), 520);
+  };
+  const prepareComparison = () => {
+    setOperation({ state: "loading", message: "Estamos verificando habilidades y oportunidades compatibles." });
+    window.setTimeout(() => { setComparisonReady(true); setOperation({ state: "success", message: "Comparación preparada. La recomendación seguirá siendo revisable por People & Culture." }); }, 520);
+  };
+  const icon = operation?.state === "loading" ? <Loader2 className="animate-spin" size={18} /> : operation?.state === "success" ? <Check size={18} /> : <CircleAlert size={18} />;
+  return <article className="data-panel profile-operation-panel"><div className="panel-header"><div><p className="eyebrow">Operaciones de perfil</p><h2>Acciones con confirmación visible</h2><p>Las acciones no reemplazan la revisión humana ni modifican el perfil sintético.</p></div><StatusPill tone="violet">Demo</StatusPill></div><div className="profile-operation-actions"><button className="button secondary" onClick={requestReview} disabled={operation?.state === "loading"}><CircleAlert size={16} />Solicitar revisión</button><button className="button primary" onClick={prepareComparison} disabled={operation?.state === "loading"}><Target size={16} />Preparar comparación</button>{comparisonReady && <button className="button subtle" onClick={onMobility}>Abrir movilidad <ArrowRight size={16} /></button>}</div>{operation && <div className={`operation-feedback ${operation.state}`} role={operation.state === "error" ? "alert" : "status"} aria-live="polite">{icon}<div><strong>{operation.state === "loading" ? "Procesando" : operation.state === "success" ? "Operación completada" : "No se pudo continuar"}</strong><span>{operation.message}</span></div></div>}</article>;
+}
+
 function LearningRoute({ employee }: { employee: Employee }) {
   const [recommendation, setRecommendation] = useState<LearningRecommendation | null>(null);
   const recommendationMutation = trpc.learning.recommend.useMutation({
@@ -130,7 +154,7 @@ function LearningRoute({ employee }: { employee: Employee }) {
 }
 
 function ProfileDetail({ employee, onBack, onMobility }: { employee: Employee; onBack: () => void; onMobility: () => void }) {
-  return <div className="view-stack"><ProfileDetailBase employee={employee} onBack={onBack} onMobility={onMobility} /><LearningRoute employee={employee} /></div>;
+  return <div className="view-stack"><ProfileDetailBase employee={employee} onBack={onBack} onMobility={onMobility} /><ProfileOperations employee={employee} onMobility={onMobility} /><LearningRoute employee={employee} /></div>;
 }
 
 function AssessmentBuilderComplete({ onNavigate }: { onNavigate: (view: AppView) => void }) {
@@ -145,22 +169,49 @@ function AssessmentBuilderComplete({ onNavigate }: { onNavigate: (view: AppView)
   return <div className="builder-layout"><div className="builder-side"><button className="back-button" onClick={() => onNavigate("assessments")}><ArrowLeft size={16} />Evaluaciones</button><p className="eyebrow">Constructor de instrumento</p><h1>Diseña un proceso trazable.</h1><p>Los cambios viven en borrador hasta la publicación de una versión.</p><ol>{steps.map((item, index) => <li key={item} className={index === step ? "current" : index < step ? "done" : ""}><span>{index < step ? <Check size={13} /> : index + 1}</span><button onClick={() => setStep(index)}>{item}</button></li>)}</ol></div><section className="builder-content"><div className="builder-header"><div><p className="eyebrow">Paso {step + 1} de {steps.length}</p><h2>{steps[step]}</h2><p>Configura criterios claros, versión y trazabilidad antes de publicar.</p></div><StatusPill tone="violet">Borrador v0.1</StatusPill></div>{editor}<div className="builder-footer"><button className="button secondary" onClick={() => toast.success("Borrador guardado localmente en esta demostración.")}>Guardar borrador</button><div><button className="button subtle" onClick={() => setStep(Math.max(0, step - 1))}>Anterior</button>{step === steps.length - 1 ? <button className="button primary" onClick={() => { toast.success("Plantilla publicada como versión 1.0."); onNavigate("assessments"); }}>Publicar versión</button> : <button className="button primary" onClick={() => setStep(Math.min(steps.length - 1, step + 1))}>Continuar <ArrowRight size={16} /></button>}</div></div></section></div>;
 }
 
-function ReportsWithAccess({ role }: { role: DemoRole }) {
-  const canExport = role === "Administrador People & Culture";
+function ReportsWithAccess({ role }: { role: AccessRole }) {
+  const canExport = role === "admin";
   const reportRows = ["Brechas por área", "Estado de evaluaciones", "Talento para movilidad", "Competencias por cargo"];
-  return <div className="view-stack"><SectionHeading eyebrow="Reportes y análisis" title="Evidencia para una conversación más informada." description="Las exportaciones son simuladas y cada solicitud queda representada en la auditoría de la demo." action={<button disabled={!canExport} className="button primary" onClick={() => toast.success("Exportación CSV simulada; se registró el evento de auditoría.")}><Download size={17} />Exportar resumen</button>} />{!canExport && <div className="access-banner"><ShieldCheck size={17} /><p><strong>Exportación restringida.</strong> La vista actual permite analizar datos agregados, pero la descarga requiere el rol Administrador People & Culture.</p></div>}<div className="report-grid">{reportRows.map((row, index) => <article className="report-card" key={row}><span className={`report-icon tone-${index}`}><BarChart3 size={20} /></span><p>Reporte preparado</p><h2>{row}</h2><span>Periodo: Q3 2026 · Tenant activo</span><button onClick={() => toast.info(`Vista previa de ${row}.`)}>Vista previa <ArrowRight size={15} /></button></article>)}</div><article className="data-panel report-note"><Info size={20} /><div><h2>Privacidad primero</h2><p>Los análisis agregados reducen la exposición de información individual. La exportación real deberá respetar rol, tenant, política de retención y trazabilidad.</p></div></article></div>;
+  const exportSummary = trpc.reports.exportSummary.useMutation({
+    onSuccess: file => {
+      const url = URL.createObjectURL(new Blob([file.content], { type: file.contentType }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = file.filename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      toast.success("Se descargó el resumen sintético autorizado.");
+    },
+    onError: error => toast.error(error.message),
+  });
+  return <div className="view-stack"><SectionHeading eyebrow="Reportes y análisis" title="Evidencia para una conversación más informada." description="La descarga se autoriza en el servidor y el contenido actual permanece estrictamente sintético." action={<button disabled={!canExport || exportSummary.isPending} className="button primary" onClick={() => exportSummary.mutate()}><Download size={17} />{exportSummary.isPending ? "Preparando…" : "Exportar resumen"}</button>} />{!canExport && <div className="access-banner"><ShieldCheck size={17} /><p><strong>Exportación restringida.</strong> La vista actual permite analizar datos agregados, pero la descarga requiere el rol Administración de plataforma.</p></div>}<div className="report-grid">{reportRows.map((row, index) => <article className="report-card" key={row}><span className={`report-icon tone-${index}`}><BarChart3 size={20} /></span><p>Reporte preparado</p><h2>{row}</h2><span>Periodo: Q3 2026 · Tenant activo</span><button onClick={() => toast.info(`Vista previa de ${row}.`)}>Vista previa <ArrowRight size={15} /></button></article>)}</div><article className="data-panel report-note"><Info size={20} /><div><h2>Privacidad primero</h2><p>La exportación se autoriza en servidor. Cuando existan datos reales, el repositorio deberá filtrar por tenant, campaña y relación con cada participante antes de crear el archivo.</p></div></article></div>;
 }
 
-function SettingsWithAccess({ role }: { role: DemoRole }) {
+function AccessManagementPanel() {
+  const utils = trpc.useUtils();
+  const usersQuery = trpc.access.listUsers.useQuery();
+  const updateAccess = trpc.access.updateUser.useMutation({
+    onSuccess: async () => {
+      await utils.access.listUsers.invalidate();
+      toast.success("Acceso actualizado. El cambio se aplicará en la próxima solicitud del usuario.");
+    },
+    onError: error => toast.error(error.message),
+  });
+  const update = (openId: string, role: AccessRole, accessStatus: "invited" | "active" | "suspended") => updateAccess.mutate({ openId, role, accessStatus });
+
+  return <article className="data-panel access-panel"><div className="panel-header"><div><p className="eyebrow">Control de acceso</p><h2>Identidades autorizadas</h2><p>Una persona aparece después de su primer inicio de sesión. Activá el acceso y asigná el menor privilegio necesario antes de cargar datos reales.</p></div><StatusPill tone="violet">Solo administración</StatusPill></div>{usersQuery.isLoading ? <div className="access-panel-state"><Loader2 className="animate-spin" size={18} />Cargando identidades autorizadas…</div> : usersQuery.error ? <div className="access-panel-state error"><CircleAlert size={18} />No fue posible consultar los accesos. Reintentá antes de modificar permisos.</div> : <div className="access-table-wrap" role="region" aria-label="Usuarios y roles de plataforma" tabIndex={0}><table className="employee-table access-table"><thead><tr><th>Identidad</th><th>Rol</th><th>Estado</th><th>Último acceso</th></tr></thead><tbody>{usersQuery.data?.map(person => <tr key={person.openId}><td><strong>{person.name ?? "Sin nombre"}</strong><small>{person.email ?? person.openId}</small></td><td><select aria-label={`Rol de ${person.name ?? person.openId}`} value={person.role} disabled={updateAccess.isPending} onChange={event => update(person.openId, event.target.value as AccessRole, person.accessStatus)}>{Object.entries(roleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></td><td><select aria-label={`Estado de acceso de ${person.name ?? person.openId}`} value={person.accessStatus} disabled={updateAccess.isPending} onChange={event => update(person.openId, person.role as AccessRole, event.target.value as "invited" | "active" | "suspended")}><option value="invited">Pendiente</option><option value="active">Activo</option><option value="suspended">Suspendido</option></select></td><td>{new Date(person.lastSignedIn).toLocaleDateString("es-PY", { day: "2-digit", month: "short", year: "numeric" })}</td></tr>)}</tbody></table>{usersQuery.data?.length === 0 && <div className="access-panel-state">Todavía no hay identidades registradas. Las personas deben iniciar sesión una vez para aparecer aquí.</div>}</div>}<p className="table-note">Roles disponibles: Colaborador (propia evaluación), Líder de equipo (lectura acotada), People & Culture (gestión de campañas) y Administración de plataforma (gobierno y asignación de accesos).</p></article>;
+}
+
+function SettingsWithAccess({ role }: { role: AccessRole }) {
   const [retention, setRetention] = useState(true);
   const [theme, setTheme] = useState(true);
-  const canManage = role === "Administrador People & Culture";
+  const canManage = role === "admin";
   if (!canManage) return <div className="restricted-page"><ShieldCheck size={28} /><p className="eyebrow">Acceso limitado</p><h1>La configuración está protegida.</h1><p>El rol <strong>{role}</strong> puede consultar experiencias habilitadas, pero no puede cambiar políticas, tema, auditoría o contexto organizacional.</p></div>;
   return <div className="view-stack"><SectionHeading eyebrow="Gobierno de la plataforma" title="Configuración" description="Parámetros visibles para administrar el entorno de demostración y preparar su integración corporativa." /><div className="settings-grid"><article className="data-panel settings-list"><div className="panel-header"><div><h2>Contexto organizacional</h2><p>Datos sintéticos precargados.</p></div><StatusPill tone="green">Activo</StatusPill></div>{[["Empresas / tenants", "3 empresas"], ["Áreas y equipos", "8 áreas · 15 equipos"], ["Cargos y roles objetivo", "20 cargos · 12 roles"], ["Competencias", "25 competencias"]].map(([label, value]) => <div className="setting-row" key={label}><span>{label}</span><strong>{value}</strong><ChevronRight size={16} /></div>)}</article><article className="data-panel settings-list"><div className="panel-header"><div><h2>Privacidad y experiencia</h2><p>Controles configurables del MVP.</p></div></div><div className="setting-row toggle-row"><span><strong>Retención de resultados</strong><small>Política visible para datos evaluativos.</small></span><button className={retention ? "switch active" : "switch"} onClick={() => setRetention(!retention)} aria-label="Cambiar retención de resultados"><i /></button></div><div className="setting-row toggle-row"><span><strong>Tema ITTI configurable</strong><small>Tokens provisionales hasta validar marca.</small></span><button className={theme ? "switch active" : "switch"} onClick={() => setTheme(!theme)} aria-label="Cambiar tema configurable"><i /></button></div><div className="brand-token-box"><span>Accent token</span><strong>--accent</strong><i /></div></article></div><article className="data-panel audit-panel"><div className="panel-header"><div><h2>Auditoría reciente</h2><p>Eventos de demostración sin secretos ni contenido sensible.</p></div><button className="text-link" onClick={() => toast.info("La auditoría completa estará disponible con persistencia de eventos.")}>Ver todo</button></div>{auditEvents.map(event => <div className="audit-row" key={event.action}><span>{event.type}</span><strong>{event.action}</strong><p>{event.detail}</p><small>{event.actor} · {event.date}</small></div>)}</article></div>;
 }
 
-function Assessments({ onNavigate }: { onNavigate: (view: AppView) => void }) {
-  return <div className="view-stack"><SectionHeading eyebrow="Instrumentos y ciclos" title="Evaluaciones" description="Configura instrumentos versionados y asigna procesos sin alterar resultados ya publicados." action={<button className="button primary" onClick={() => onNavigate("builder")}><Plus size={17} />Nueva plantilla</button>} /><div className="assessment-summary"><div><strong>5</strong><span>instrumentos</span></div><div><strong>3</strong><span>publicados</span></div><div><strong>134</strong><span>asignaciones activas</span></div><div><strong>61%</strong><span>avance promedio</span></div></div><div className="assessment-list">{assessmentTemplates.map(template => <article className="assessment-card" key={template.id}><div className="assessment-top"><div><StatusPill tone={template.status === "Publicada" ? "green" : template.status === "Borrador" ? "violet" : "neutral"}>{template.status}</StatusPill><h2>{template.name}</h2><p>{template.audience} · vence {template.due}</p></div><button className="icon-button" onClick={() => toast.info("Acciones de plantilla: duplicar, archivar o revisar versión.")} aria-label={`Acciones para ${template.name}`}><SlidersHorizontal size={18} /></button></div><div className="template-tags">{template.competencies.map(item => <span key={item}>{item}</span>)}</div><div className="template-foot"><div><span className="progress-label"><strong>{template.completion}%</strong> completado · {template.assigned} asignadas</span><div className="progress-track"><i style={{ width: `${template.completion}%` }} /></div></div><div className="template-actions"><button onClick={() => onNavigate("flow")}>Vista previa</button><button className="button mini" onClick={() => toast.success("Asignación demo registrada para el equipo seleccionado.")}>Asignar</button></div></div></article>)}</div></div>;
+function Assessments({ onNavigate, role, initialAction }: { onNavigate: (view: AppView) => void; role: AccessRole; initialAction?: "instrument" | "operation" | "results" }) {
+  return <AssessmentOperationsHub accessRole={role} onOpenPilot={() => onNavigate("pilot")} initialAction={initialAction} />;
 }
 
 function AssessmentBuilder({ onNavigate }: { onNavigate: (view: AppView) => void }) {
@@ -200,23 +251,36 @@ function Settings() {
 }
 
 export default function Home() {
-  const [view, setView] = useState<AppView>(() => new URLSearchParams(window.location.search).get("view") === "pilot" ? "pilot" : "overview");
-  const [role, setRole] = useState<DemoRole>("Administrador People & Culture");
+  const [view, setView] = useState<AppView>(() => {
+    const requestedView = new URLSearchParams(window.location.search).get("view");
+    const directViews: AppView[] = ["overview", "people", "profile", "assessments", "builder", "flow", "pilot", "mobility", "reports", "settings"];
+    return directViews.includes(requestedView as AppView) ? requestedView as AppView : "overview";
+  });
+  const { user, loading, isAuthenticated, logout } = useAuth();
   const [selectedEmployee, setSelectedEmployee] = useState<Employee>(demoEmployees[0]);
+  const role = user?.role as AccessRole | undefined;
+  const canOpen = (candidate: AppView) => role ? ({ admin: true, people_ops: candidate !== "settings", manager: ["overview", "profile", "flow", "pilot"].includes(candidate), collaborator: ["profile", "flow", "pilot"].includes(candidate) })[role] : false;
+  useEffect(() => {
+    if (role && !canOpen(view)) setView(role === "collaborator" ? "pilot" : "overview");
+  }, [role, view]);
+  if (loading) return <DashboardLayoutSkeleton />;
+  if (!isAuthenticated) return <main className="auth-gate"><section className="auth-card"><ShieldCheck size={30} /><p className="eyebrow">Itti Talent Compass</p><h1>Acceso protegido para People & Culture.</h1><p>Iniciá sesión con tu identidad corporativa autorizada. Las campañas, evaluaciones y recomendaciones no quedan disponibles sin una sesión válida.</p><button className="button primary" type="button" onClick={startLogin}>Iniciar sesión segura</button></section></main>;
+  if (!user || user.accessStatus !== "active") return <main className="auth-gate"><section className="auth-card"><ShieldCheck size={30} /><p className="eyebrow">Acceso pendiente</p><h1>Tu identidad fue verificada.</h1><p>Un administrador de plataforma debe activar tu rol antes de habilitar información de talento. No se mostraron datos de participantes ni campañas.</p><button className="button secondary" type="button" onClick={() => void logout()}>Cerrar sesión</button></section></main>;
+  const activeRole = user.role as AccessRole;
   const openProfile = (employee: Employee) => { setSelectedEmployee(employee); setView("profile"); };
   const content = (() => {
     switch (view) {
       case "people": return <People onProfile={openProfile} />;
       case "profile": return <ProfileDetail employee={selectedEmployee} onBack={() => setView("people")} onMobility={() => setView("mobility")} />;
-      case "assessments": return <Assessments onNavigate={setView} />;
-      case "builder": return <AssessmentBuilderComplete onNavigate={setView} />;
-      case "flow": return <EvaluationFlow onNavigate={setView} />;
-      case "pilot": return <PilotProfiler />;
+      case "assessments": return <Assessments onNavigate={setView} role={activeRole} />;
+      case "builder": return <Assessments onNavigate={setView} role={activeRole} />;
+      case "flow": return <Assessments onNavigate={setView} role={activeRole} />;
+      case "pilot": return <PersistentPilotWorkspace accessRole={activeRole} />;
       case "mobility": return <Mobility selectedEmployee={selectedEmployee} onProfile={openProfile} />;
-      case "reports": return <ReportsWithAccess role={role} />;
-      case "settings": return <SettingsWithAccess role={role} />;
+      case "reports": return <Assessments onNavigate={setView} role={activeRole} initialAction="results" />;
+      case "settings": return <><SettingsWithAccess role={activeRole} /><AccessManagementPanel /></>;
       default: return <Overview onNavigate={setView} onProfile={openProfile} />;
     }
   })();
-  return <DashboardLayout activeView={view} onNavigate={setView} role={role} onRoleChange={setRole}>{content}</DashboardLayout>;
+  return <DashboardLayout activeView={view} onNavigate={setView} user={{ name: user.name, email: user.email, role: activeRole }} onLogout={() => void logout()}>{content}</DashboardLayout>;
 }

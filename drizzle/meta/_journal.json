@@ -8,6 +8,41 @@
       "when": 1786578782513,
       "tag": "0000_tidy_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1786654350299,
+      "tag": "0001_chemical_unus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1786655160803,
+      "tag": "0002_fat_overlord",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1787163487659,
+      "tag": "0003_acoustic_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1787164312200,
+      "tag": "0004_chemical_betty_brant",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1787178614112,
+      "tag": "0005_early_trish_tilby",
+      "breakpoints": true
     }
   ]
 }

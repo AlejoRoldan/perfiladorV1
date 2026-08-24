@@ -9,6 +9,7 @@ import { appRouter } from "../routers";
 import { profilingOpenApi } from "../openapi";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { campaignReminderHandler } from "../campaignReminderHandler";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -40,6 +41,7 @@ async function startServer() {
   app.get("/api/v1/openapi.json", (_req, res) => {
     res.status(200).type("application/json").send(profilingOpenApi);
   });
+  app.post("/api/scheduled/campaign-reminders", campaignReminderHandler);
   // tRPC API
   app.use(
     "/api/trpc",

@@ -13,7 +13,7 @@
 | Panorama | Indicadores de talento, radar, barras, mapa de calor tabular, alertas y auditoría. |
 | Colaboradores | Búsqueda de perfiles sintéticos y acceso a una ficha 360°. |
 | Perfil 360° | Habilidades, nivel observado, evidencia, fortalezas, brechas, metodología, confianza y ruta de capacitación asistida. |
-| Evaluaciones | Listado de instrumentos, estados, asignación simulada, constructor y flujo de respuesta. |
+| Evaluaciones | Listado de instrumentos, constructor, campañas persistentes, participantes, ventanas de evaluación y avisos internos. |
 | Constructor | Navegación por pasos, edición de preguntas, borrador, validación visual y publicación simulada. |
 | Perfilador UCorp F1 | Configuración dual, sesión tipada, fallback, revisión HITL, autoevaluación, diagnóstico por flujo y contrato OpenAPI. |
 | Movilidad interna | Oportunidades, candidatos, coincidencias, brechas y compatibilidad explicable. |
@@ -21,7 +21,7 @@
 
 ## Datos de demostración
 
-El catálogo tipado en `client/src/data/talentDemo.ts` crea un universo consistente con el alcance del MVP: **80 colaboradores**, **3 empresas**, **8 áreas**, **15 equipos**, **20 cargos**, **25 competencias**, **5 instrumentos** y **10 oportunidades internas**. El conjunto está creado con identidades ficticias y no debe sustituirse por datos personales reales hasta implementar controles de privacidad, autorización, retención y aislamiento por tenant.
+El catálogo tipado en `client/src/data/talentDemo.ts` crea un universo consistente con el alcance del MVP: **80 colaboradores**, **3 empresas**, **8 áreas**, **15 equipos**, **20 cargos**, **25 competencias**, instrumentos base y **10 oportunidades internas**. El conjunto está creado con identidades ficticias y no debe sustituirse por datos personales reales hasta implementar controles de privacidad, autorización, retención y aislamiento por tenant.
 
 ## Sistema visual ITTI configurable
 
@@ -39,6 +39,9 @@ flowchart LR
   UI --> F1[Perfilador UCorp F1]
   F1 --> F1ENGINE[Motor de diagnóstico 1–4]
   F1 --> OPENAPI[Contrato REST OpenAPI]
+  UI --> CAMPAIGNS[Campañas persistentes]
+  CAMPAIGNS --> CAMPAIGNDB[(Campañas · Participantes · Avisos)]
+  HEARTBEAT[Planificador global horario] --> CAMPAIGNS
   ENGINE --> MOBILITY[Compatibilidad persona–rol]
   PROFILE --> LEARNING[Recomendación asistida]
   LEARNING --> LLM[Modelo integrado en servidor]
@@ -53,6 +56,7 @@ flowchart LR
 | Datos demo | Escenarios sintéticos visibles desde el primer acceso. | Sustituir por repositorios con tenant, permisos y paginación. |
 | Motor | Normalización, ponderación, brechas y compatibilidad explicable. | Versionar fórmulas, persistir evidencias y registrar recálculos. |
 | Perfilador F1 | Configuración, sesión, HITL, autoevaluación, diagnóstico y OpenAPI en modo demo. | Conectar fuentes, RBAC, persistencia, auditoría inmutable y evidencia documental. |
+| Campañas | Persistencia de campañas, participantes, calendario, avisos internos y trazabilidad idempotente. | Agregar RBAC, notificaciones por canal corporativo, retención e integración con identidad/HRIS. |
 | Recomendación asistida | Envía solo señales mínimas de desarrollo al servidor y valida una ruta educativa estructurada. | Conectar catálogo aprobado, RBAC, consentimiento y auditoría de uso sin contenido sensible. |
 | Gobierno | Señales de rol, auditoría y exportaciones simuladas. | Aplicar RBAC real en servidor, aislamiento, retención y auditoría persistente. |
 
@@ -66,7 +70,7 @@ El contrato, las exclusiones de datos y la preparación para producción están 
 
 ## Perfilador UCorp F1
 
-El Perfilador F1 implementa H2–H8 del piloto y excluye **H1 — autenticación** por decisión de alcance. Se abre desde la navegación lateral o directamente en `/?view=pilot`; trabaja con el área de Producto, 12 colaboradores sintéticos y fuentes demo editables. La experiencia contiene una configuración dual de valores y competencias, generación con fallback, revisión humana obligatoria, evaluación retomable, diagnóstico separado por flujo y una especificación REST en [`/api/v1/openapi.json`](/api/v1/openapi.json). [2]
+El Perfilador F1 implementa H1–H8 del piloto. La plataforma requiere una sesión OAuth aprobada antes de habilitar sus recorridos. La ruta protegida `/?view=pilot` ahora inicia en un workspace persistente aislado por tenant y piloto: no carga colaboradores sintéticos y solo muestra participantes autorizados. La experiencia demo de F1 se conserva como referencia de diseño y motor; las respuestas, asignaciones y diagnósticos del piloto real se almacenan mediante procedimientos de servidor con alcance explícito. La especificación REST continúa disponible en [`/api/v1/openapi.json`](/api/v1/openapi.json). [2]
 
 | Regla | Implementación de demo |
 |---|---|
@@ -80,7 +84,29 @@ El Perfilador F1 implementa H2–H8 del piloto y excluye **H1 — autenticación
 
 La matriz completa de implementación, criterios y límites está disponible en [`docs/pilot-f1-traceability.md`](docs/pilot-f1-traceability.md).
 
+La cobertura de las ocho vistas del mockup standalone, junto con la evidencia de validación móvil, está detallada en [`docs/pilot-standalone-coverage.md`](docs/pilot-standalone-coverage.md).
+
 El inventario de código, documentación y archivos fuente a incorporar al repositorio privado se encuentra en [`docs/repository-inventory.md`](docs/repository-inventory.md).
+
+El diseño gradual para incorporar **20 participantes reales** sin mezclar su información con la demostración está definido en [`docs/pilot-real-participants-storage.md`](docs/pilot-real-participants-storage.md). La identidad, la aprobación explícita y el control de acceso por rol se documentan en [`docs/access-control-operation.md`](docs/access-control-operation.md). El modelo persistente y la operación por tenant, piloto, campaña y participante están documentados en [`docs/pilot-persistence-operation.md`](docs/pilot-persistence-operation.md).
+
+La configuración, revisión y aprobación inmutable de instrumentos persistentes están descritas en [`docs/persistent-instrument-operation.md`](docs/persistent-instrument-operation.md).
+
+La auditoría de capacidades y la hoja de ruta para evolucionar el artefacto hacia un proceso E2E de talento están disponibles en [`docs/e2e-talent-platform-roadmap.md`](docs/e2e-talent-platform-roadmap.md).
+
+El recorrido técnico y operativo que registra campañas, asignaciones, respuestas y diagnósticos en MySQL/TiDB está documentado en [`docs/evaluation-persistence-operation.md`](docs/evaluation-persistence-operation.md).
+
+El panel protegido de resultados, sus filtros y la exportación CSV trazable están documentados en [`docs/results-dashboard-operation.md`](docs/results-dashboard-operation.md).
+
+## Campañas de evaluación y avisos internos
+
+El módulo heredado de campañas permanece como demostración de la cadencia y los avisos internos. El ciclo real debe operar exclusivamente mediante el repositorio aislado por `tenant_id`, `pilot_id` y participante; la migración de la experiencia visible está priorizada en la hoja de ruta E2E.
+
+El planificador global `itti-campaign-reminders` revisa las campañas cada hora por el callback protegido `POST /api/scheduled/campaign-reminders`. Cuando corresponde, registra un aviso de apertura, uno a mitad de la ventana y uno 48 horas antes del cierre para participantes pendientes. Cada entrega usa una clave idempotente por campaña, participante e hito, por lo que un reintento no duplica avisos.
+
+> En este alcance, los avisos son **internos a la plataforma**: se registran y se visualizan en la administración. No se envían correos ni mensajes externos. Antes de invitar usuarios reales, los avisos deberán migrarse y vincularse a asignaciones persistentes del piloto para conservar el filtro de tenant, campaña y participante.
+
+La operación, la activación única del planificador y los límites de la demo están detallados en [`docs/campaigns-operation.md`](docs/campaigns-operation.md).
 
 ## Ejecutar localmente
 
@@ -101,7 +127,7 @@ pnpm test:a11y
 
 ## Pruebas incluidas
 
-La suite de Vitest cubre el cálculo de normalización, ponderaciones, brechas, compatibilidad explicable, integridad mínima del catálogo sintético, el contrato de la recomendación asistida y el Perfilador UCorp F1. Las pruebas F1 cubren normalización, fronteras de tolerancia, aprobación HITL, respuestas faltantes, composición por extensión, diagnóstico por flujo y el contrato OpenAPI. El comando `pnpm test:a11y` ejecuta Axe sobre la vista inicial con reglas WCAG 2 A, AA y 2.1 AA. La extensión hacia datos reales debe añadir pruebas de autorización de servidor, separación entre tenants, persistencia, auditoría y flujos de extremo a extremo.
+La suite de Vitest cubre el cálculo de normalización, ponderaciones, brechas, compatibilidad explicable, integridad mínima del catálogo sintético, el contrato de la recomendación asistida, el Perfilador UCorp F1 y campañas. Las pruebas de campañas validan ventanas, ciclo de vida, participantes, hitos de apertura/mitad/cierre, pausas, idempotencia y el callback cron autenticado. El comando `pnpm test:a11y` ejecuta Axe sobre la vista inicial con reglas WCAG 2 A, AA y 2.1 AA. La extensión hacia datos reales debe añadir pruebas de autorización de servidor, separación entre tenants, persistencia de talento, auditoría y flujos de extremo a extremo.
 
 ## Integraciones pendientes
 
@@ -115,7 +141,7 @@ La suite de Vitest cubre el cálculo de normalización, ponderaciones, brechas, 
 
 ## Limitaciones conscientes
 
-El MVP no implementa autenticación corporativa real, base de datos funcional para las entidades de talento, exportación de archivos reales, carga de evidencias ni integraciones externas. Estas funciones se representan como flujos interactivos para validar la experiencia, sin simular seguridad o conectividad inexistentes.
+La plataforma ya implementa autenticación OAuth aprobada, roles persistentes, aislamiento del workspace por tenant/piloto/participante y repositorios de respuestas/diagnósticos. Aún no ofrece un ciclo E2E en la interfaz: el constructor, campañas, formularios de evaluación, diagnóstico visible, reportes y movilidad continúan total o parcialmente en modo demostración. Tampoco incluye importación HRIS, exportación de archivos reales, carga de evidencias ni integraciones corporativas externas. La secuencia de implementación y los criterios de salida están definidos en la hoja de ruta E2E.
 
 ## Referencia visual
 

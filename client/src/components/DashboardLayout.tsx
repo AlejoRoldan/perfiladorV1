@@ -9,16 +9,18 @@ import {
   ShieldCheck,
   UsersRound,
 } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { roleLabels, type AccessRole } from "@shared/accessControl";
 import { useState } from "react";
 
 export type AppView = "overview" | "people" | "profile" | "assessments" | "builder" | "flow" | "pilot" | "mobility" | "reports" | "settings";
-export type DemoRole = "Administrador People & Culture" | "Líder de equipo" | "Colaborador";
+export type AuthenticatedUser = { name: string | null; email: string | null; role: AccessRole };
 
 const items: Array<{ id: AppView; label: string; icon: typeof BarChart3; group?: string }> = [
   { id: "overview", label: "Panorama", icon: BarChart3, group: "Inteligencia" },
   { id: "people", label: "Colaboradores", icon: UsersRound },
-  { id: "assessments", label: "Evaluaciones", icon: ClipboardCheck, group: "Gestión" },
-  { id: "pilot", label: "Perfilador F1", icon: ClipboardCheck, group: "Piloto" },
+  { id: "assessments", label: "Ciclo de evaluación", icon: ClipboardCheck, group: "Gestión" },
+  { id: "pilot", label: "Datos del piloto", icon: ClipboardCheck, group: "Piloto" },
   { id: "mobility", label: "Movilidad · futuro", icon: BriefcaseBusiness },
   { id: "reports", label: "Reportes", icon: ArrowUpRight, group: "Gobierno" },
   { id: "settings", label: "Configuración", icon: Settings2 },
@@ -27,19 +29,23 @@ const items: Array<{ id: AppView; label: string; icon: typeof BarChart3; group?:
 export default function DashboardLayout({
   activeView,
   onNavigate,
-  role,
-  onRoleChange,
+  user,
+  onLogout,
   children,
 }: {
   activeView: AppView;
   onNavigate: (view: AppView) => void;
-  role: DemoRole;
-  onRoleChange: (role: DemoRole) => void;
+  user: AuthenticatedUser;
+  onLogout: () => void;
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const [roleOpen, setRoleOpen] = useState(false);
-  const canOpen = (view: AppView) => role === "Administrador People & Culture" || (role === "Líder de equipo" && !["settings", "reports"].includes(view)) || (role === "Colaborador" && ["overview", "profile", "flow"].includes(view));
+  const canOpen = (view: AppView) => ({
+    admin: true,
+    people_ops: view !== "settings",
+    manager: ["overview", "profile", "flow", "pilot"].includes(view),
+    collaborator: ["profile", "flow", "pilot"].includes(view),
+  })[user.role];
 
   return (
     <div className="app-shell">
@@ -65,7 +71,7 @@ export default function DashboardLayout({
             </div>
           ))}
         </nav>
-        <div className="sidebar-note"><ShieldCheck size={16} /><span>Datos demo sintéticos<br />Tema ITTI configurable</span></div>
+        <div className="sidebar-note"><ShieldCheck size={16} /><span>Espacio aislado del piloto<br />Datos demo separados</span></div>
       </aside>
       {open && <button className="sidebar-scrim" aria-label="Cerrar menú" onClick={() => setOpen(false)} />}
       <section className="app-stage">
@@ -74,10 +80,7 @@ export default function DashboardLayout({
           <div className="crumb"><span>People & Culture</span><b>/</b><strong>{items.find(item => item.id === activeView)?.label ?? (activeView === "profile" ? "Perfil 360°" : activeView === "builder" ? "Constructor" : "Experiencia de evaluación")}</strong></div>
           <div className="header-actions">
             <span className="sync-state"><span className="signal-dot" />Actualizado ahora</span>
-            <div className="role-wrap">
-              <button className="role-button" onClick={() => setRoleOpen(!roleOpen)} aria-expanded={roleOpen}><span className="role-avatar">MR</span><span><small>Acceso demo</small>{role}</span><ChevronDown size={15} /></button>
-              {roleOpen && <div className="role-menu"><p>Vista simulada</p>{(["Administrador People & Culture", "Líder de equipo", "Colaborador"] as DemoRole[]).map(option => <button key={option} onClick={() => { onRoleChange(option); setRoleOpen(false); }}>{option}</button>)}</div>}
-            </div>
+            <div className="role-wrap"><div className="role-button" aria-label={`Sesión de ${roleLabels[user.role]}`}><span className="role-avatar">{(user.name ?? "U").slice(0, 2).toUpperCase()}</span><span><small>{roleLabels[user.role]}</small>{user.name ?? user.email ?? "Usuario autenticado"}</span></div><button className="icon-button" type="button" onClick={onLogout} aria-label="Cerrar sesión"><LogOut size={16} /></button></div>
           </div>
         </header>
         <main className="app-content">{children}</main>

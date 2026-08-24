@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import type { AccessRole, AccessStatus } from "../shared/accessControl";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -58,6 +59,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
     } else if (user.openId === ENV.ownerOpenId) {
       values.role = 'admin';
       updateSet.role = 'admin';
+      values.accessStatus = 'active';
+      updateSet.accessStatus = 'active';
     }
 
     if (!values.lastSignedIn) {
@@ -87,6 +90,32 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function listPlatformUsers() {
+  const db = await getDb();
+  if (!db) throw new Error("Base de datos no disponible para administrar accesos.");
+  return db.select({
+    id: users.id,
+    openId: users.openId,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    accessStatus: users.accessStatus,
+    lastSignedIn: users.lastSignedIn,
+    createdAt: users.createdAt,
+  }).from(users).orderBy(asc(users.createdAt));
+}
+
+export async function updatePlatformUserAccess(
+  openId: string,
+  role: AccessRole,
+  accessStatus: AccessStatus,
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Base de datos no disponible para administrar accesos.");
+  await db.update(users).set({ role, accessStatus }).where(eq(users.openId, openId));
+  return getUserByOpenId(openId);
 }
 
 // TODO: add feature queries here as your schema grows.

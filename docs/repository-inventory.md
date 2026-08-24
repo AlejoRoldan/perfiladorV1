@@ -2,7 +2,7 @@
 
 ## Estado del inventario
 
-El proyecto contiene el código de la demo, la documentación de arquitectura, la trazabilidad del Perfilador UCorp F1 y los tres documentos fuente originales bajo `docs/source/`. Los resúmenes trazables continúan disponibles dentro del proyecto para facilitar la lectura y la verificación de requisitos. [1] [2] [3]
+El proyecto ya contiene el código de la demo, la documentación de arquitectura y la trazabilidad del Perfilador UCorp F1. Los tres documentos originales recibidos permanecen como archivos fuente fuera del directorio de proyecto; para el repositorio futuro deberán incorporarse bajo `docs/source/` sin alterar los archivos originales. Sus resúmenes trazables ya están disponibles dentro del proyecto. [1] [2] [3]
 
 ## Código relevante
 
@@ -27,12 +27,10 @@ El proyecto contiene el código de la demo, la documentación de arquitectura, l
 | `docs/source-analysis/prd-summary.md` | Resumen trazable del PRD. |
 | `docs/source-analysis/user-stories-partial-summary.md` | Resumen trazable de las historias H1–H8. |
 | `docs/source-analysis/profiling-model-summary.md` | Resumen ejecutivo de reglas del modelo de perfilamiento. |
-| `docs/source/` | PRD, historias de usuario y resumen ejecutivo originales del piloto. |
-| `docs/repository-migration.md` | Alcance, procedencia y decisiones de la migración a esta rama. |
 
-## Criterios de mantenimiento
+## Antes de crear el repositorio
 
-La rama ya contiene los documentos fuente del piloto. Antes de compartirla fuera del equipo, se debe revisar que los documentos no incorporen información personal o confidencial no autorizada, mantener el repositorio **privado** y evitar añadir secretos, dependencias instaladas o artefactos de compilación.
+Antes de inicializar o publicar el repositorio, conviene copiar los tres documentos DOCX originales a `docs/source/`, revisar que no se incluyan secretos, crear un `.gitignore` adecuado para artefactos locales y confirmar el propietario de la organización de GitHub. El repositorio debería permanecer **privado** mientras el piloto contiene documentación de procesos internos.
 
 ## Referencias
 
