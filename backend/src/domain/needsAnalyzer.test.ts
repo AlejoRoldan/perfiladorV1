@@ -30,13 +30,13 @@ describe('NeedsAnalyzer (Unit Tests)', () => {
     expect(necesidades).toHaveLength(2);
     
     // Debe estar ordenado por prioridad (ALTA primero)
-    expect(necesidades[0].competenciaId).toBe('Cloud');
-    expect(necesidades[0].prioridad).toBe('ALTA');
-    expect(necesidades[0].brecha).toBe(2);
+    expect(necesidades[0]?.competenciaId).toBe('Cloud');
+    expect(necesidades[0]?.prioridad).toBe('ALTA');
+    expect(necesidades[0]?.brecha).toBe(2);
 
-    expect(necesidades[1].competenciaId).toBe('Backend');
-    expect(necesidades[1].prioridad).toBe('MEDIA');
-    expect(necesidades[1].brecha).toBe(1.5);
+    expect(necesidades[1]?.competenciaId).toBe('Backend');
+    expect(necesidades[1]?.prioridad).toBe('MEDIA');
+    expect(necesidades[1]?.brecha).toBe(1.5);
   });
 
   it('no debe detectar necesidades si el score actual supera al esperado', () => {

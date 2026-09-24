@@ -1,4 +1,5 @@
-import { ConversationalAgent, AgentInput } from './conversationalAgent';
+import { ConversationalAgent } from './conversationalAgent';
+import type { AgentInput } from './conversationalAgent';
 
 // Mock de OpenAI
 jest.mock('openai', () => {

@@ -1,16 +1,14 @@
 {
-  "name": "backend",
+  "name": "@grupo-vazquez/perfilador-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "description": "API y motor determinístico del Perfilador Grupo Vázquez.",
   "scripts": {
     "test": "jest",
+    "build": "tsc --noEmit",
     "start": "ts-node src/server.ts",
     "dev": "ts-node src/server.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
@@ -23,7 +21,9 @@
   },
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "openai": "^6.42.0"
+    "openai": "^6.42.0",
+    "zod": "^4.3.6"
   }
 }

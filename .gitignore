@@ -1,8 +1,19 @@
+# Dependencias y artefactos generados
 node_modules/
 dist/
+coverage/
 *.js.map
 *.d.ts
 *.d.ts.map
+
+# Configuración local y secretos
 .env
 .env.local
-coverage/
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Archivos del sistema y de herramientas
+.DS_Store
+Thumbs.db

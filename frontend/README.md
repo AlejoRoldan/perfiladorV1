@@ -1,73 +1,38 @@
-# React + TypeScript + Vite
+# Frontend del Perfilador Grupo Vázquez
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Esta aplicación React implementa la experiencia de la Iteración 3: bienvenida, cuestionario de cinco preguntas, resultados por competencias y conversación de acompañamiento. Está construida con Vite, TypeScript, Tailwind CSS y Recharts.
 
-Currently, two official plugins are available:
+## Ejecución local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+El backend debe estar activo antes de usar la interfaz. Desde esta carpeta ejecuta:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm ci
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Vite mostrará una URL, habitualmente `http://localhost:5173`. Durante desarrollo, las solicitudes que comienzan con `/api` se redirigen a `http://localhost:3001` mediante el proxy definido en `vite.config.ts`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+No se requiere ni se debe configurar `OPENAI_API_KEY` en este proyecto. La clave vive exclusivamente en `backend/.env`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Calidad
+
+Ejecuta `npm run build` para validar TypeScript y generar `dist/`. Ejecuta `npm run lint` para revisar las reglas de estilo. Los archivos generados están excluidos de Git.
+
+## Estructura relevante
+
+```text
+src/
+├── pages/       # Pantallas del flujo
+├── services/    # Cliente HTTP concentrado en api.ts
+├── types/       # Espejo temporal de contratos del backend
+├── App.tsx      # Orquestación del recorrido de la persona usuaria
+└── main.tsx     # Punto de entrada React
 ```
+
+Consulta la [documentación detallada del frontend](../docs/frontend/README.md) y la [guía de inicio del repositorio](../docs/getting-started.md).
+
+## Referencias
+
+[1]: https://vite.dev/guide/ "Vite guide"
+[2]: https://react.dev/learn "React documentation"

@@ -50,7 +50,7 @@ export function ResultsPage({ scoreEvent, necesidadEvent, onContinue }: ResultsP
               <PolarGrid stroke="#e5e7eb" />
               <PolarAngleAxis dataKey="competencia" tick={{ fontSize: 12, fill: '#6b7280' }} />
               <Tooltip
-                formatter={(value: number) => [`${value} / 5`, 'Score']}
+                formatter={(value) => [`${value ?? 0} / 5`, 'Score'] as [string, string]}
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px' }}
               />
               <Radar

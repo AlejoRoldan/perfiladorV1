@@ -1,23 +1,21 @@
 {
-  "name": "agent",
+  "name": "@grupo-vazquez/perfilador-agent",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "description": "Agente conversacional para el perfilador de competencias.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "build": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@types/node": "^25.9.2",
     "dotenv": "^17.4.2",
-    "openai": "^6.42.0",
-    "typescript": "^6.0.3"
+    "openai": "^6.42.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.2",
     "jest": "^30.4.2",
-    "ts-jest": "^29.4.11"
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   }
 }

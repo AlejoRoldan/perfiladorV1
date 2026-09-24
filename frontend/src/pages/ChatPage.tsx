@@ -34,7 +34,7 @@ export function ChatPage({ scoreEvent, necesidadEvent }: ChatPageProps) {
       }
     };
     initAgent();
-  }, []);
+  }, [necesidadEvent?.necesidades, scoreEvent.execution_id, scoreEvent.role_id, scoreEvent.user_id]);
 
   // Auto-scroll al último mensaje
   useEffect(() => {

@@ -40,8 +40,8 @@ describe('ScoringEngine (Unit Tests)', () => {
     const result = engine.calculateScores(respuestas, mockMatrix);
 
     expect(result.scores).toHaveLength(1);
-    expect(result.scores[0].competenciaId).toBe('c1');
-    expect(result.scores[0].score).toBe(5);
+    expect(result.scores[0]?.competenciaId).toBe('c1');
+    expect(result.scores[0]?.score).toBe(5);
   });
 
   it('debe devolver array vacío si no hay respuestas válidas', () => {

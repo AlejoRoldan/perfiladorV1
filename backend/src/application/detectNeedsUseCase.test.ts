@@ -41,8 +41,8 @@ describe('DetectNeedsUseCase (Contract Tests)', () => {
     expect(mockPublisher.publishNecesidadEvent).toHaveBeenCalledTimes(1);
     expect(result).not.toBeNull();
     expect(result?.execution_id).toBe('exec-1');
-    expect(result?.necesidades[0].competenciaId).toBe('Liderazgo');
-    expect(result?.necesidades[0].brecha).toBe(2);
+    expect(result?.necesidades[0]?.competenciaId).toBe('Liderazgo');
+    expect(result?.necesidades[0]?.brecha).toBe(2);
   });
 
   it('no debe emitir evento ni fallar si no hay necesidades', async () => {
